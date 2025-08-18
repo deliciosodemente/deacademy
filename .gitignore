@@ -1,0 +1,25 @@
+# Ignore node modules and runtime files
+node_modules/
+api/node_modules/
+.env
+.env.*
+.DS_Store
+dist/
+build/
+.db
+db-data/
+*.log
+.vscode/
+.idea/
+*.tgz
+*.zip
+/.cache
+npm-debug.log
+/package-lock.json
+/.history
+.Dockerfile
+.docker/
+# keep system files out
+Thumbs.db
+desktop.ini
+

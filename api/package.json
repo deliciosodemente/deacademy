@@ -1,0 +1,16 @@
+{
+    "name": "fluentleap-api",
+    "version": "0.1.0",
+    "private": true,
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "fastify": "^4.23.0",
+        "pg": "^8.10.0",
+        "stripe": "^12.18.0",
+        "jsonwebtoken": "^9.0.0",
+        "jwks-rsa": "^3.0.0"
+    }
+}
