@@ -1,8 +1,9 @@
 import { $, $$, clamp, toast } from './utils.js';
-import { state } from './state.js';
+import { state, updateProgress } from './state.js';
 import { mountTutorFAB, selectionLookup } from './tutor.js';
+import { withErrorHandling } from './src/error-handler.js';
 
-export function enhance(){
+export const enhance = withErrorHandling(() => {
   // Course filters
   const grid = document.querySelector('#coursesGrid');
   if (grid){
@@ -65,9 +66,9 @@ export function enhance(){
       fb.textContent = ok ? '¡Correcto! Pregunta abierta y amable.' : 'No es ideal. Evita preguntas invasivas o negativas al iniciar.';
       fb.className = 'feedback ' + (ok ? 'correct' : 'incorrect');
       if (ok){
-        state.progress = clamp(state.progress + 8, 0, 100);
+        const newProgress = updateProgress(8);
         const bar = document.querySelector('.progress > span');
-        if (bar) bar.style.width = state.progress + '%';
+        if (bar) bar.style.width = newProgress + '%';
       }
     });
   }
@@ -113,4 +114,4 @@ export function enhance(){
   if (!enhance._motivationTimer){
     enhance._motivationTimer = setTimeout(()=>toast("¡Lo estás haciendo genial! 5 minutos más y desbloqueas 'Constancia Diaria'."), 30000);
   }
-}
+}, 'UI Enhancement');

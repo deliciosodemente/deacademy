@@ -1,6 +1,9 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/es";
+import { cache, cacheAPI } from './src/cache-manager.js';
+import { errorHandler, safeAsync } from './src/error-handler.js';
+
 dayjs.extend(relativeTime);
 dayjs.locale('es');
 
@@ -26,22 +29,46 @@ export const state = {
 };
 
 // Try to fetch from API and replace local state if available
-async function hydrateFromApi() {
+const hydrateFromApi = safeAsync(async () => {
+  // Use cached API calls with 5-minute TTL
+  const courses = await cacheAPI('/api/courses');
+  if (courses) {
+    state.courses = courses.map(c => ({ ...c }));
+  }
+
+  const threads = await cacheAPI('/api/threads');
+  if (threads) {
+    state.threads = threads.map(t => ({ 
+      ...t, 
+      time: t.time ? dayjs(t.time) : dayjs() 
+    }));
+  }
+}, null, 'API Hydration');
+
+// Enhanced state management with persistence
+export const updateProgress = (increment) => {
+  const newProgress = Math.max(0, Math.min(100, state.progress + increment));
+  state.progress = newProgress;
+  
+  // Persist to localStorage
   try {
-    const cRes = await fetch('/api/courses');
-    if (cRes.ok) {
-      const courses = await cRes.json();
-      state.courses = courses.map(c => ({ ...c }));
-    }
-    const tRes = await fetch('/api/threads');
-    if (tRes.ok) {
-      const threads = await tRes.json();
-      // convert times to dayjs objects when present
-      state.threads = threads.map(t => ({ ...t, time: t.time ? dayjs(t.time) : dayjs() }));
-    }
+    localStorage.setItem('dea_progress', String(newProgress));
   } catch (e) {
-    // API unavailable; keep defaults
-    console.info('API not available, using local state');
+    errorHandler.reportError(e, 'Progress Persistence');
+  }
+  
+  return newProgress;
+};
+
+export const savePersona = (persona) => {
+  state.persona = persona;
+  
+  try {
+    localStorage.setItem('dea_persona', JSON.stringify(persona));
+    // Clean up old key
+    localStorage.removeItem('fluentleap_persona');
+  } catch (e) {
+    errorHandler.reportError(e, 'Persona Persistence');
   }
 }
 

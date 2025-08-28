@@ -1,8 +1,9 @@
-import { state } from './state.js';
+import { state, savePersona } from './state.js';
 import { toast } from './utils.js';
+import { withErrorHandling } from './src/error-handler.js';
 
 let conversationHistory = [];
-export function initOnboarding(){
+export const initOnboarding = withErrorHandling(() => {
   if(state.persona) return;
   const wrap = document.createElement('div');
   wrap.className = 'onboarding';
@@ -54,11 +55,11 @@ export function initOnboarding(){
       ],
     });
     const p = JSON.parse(completion.content);
-    state.persona = p; localStorage.setItem('dea_persona', JSON.stringify(p)); localStorage.removeItem('fluentleap_persona');
+    savePersona(p);
     toast(`¡Listo! Te asignamos: ${p.titulo || p.persona}`);
     wrap.remove();
     if (location.hash==='#/profile'){
       window.dispatchEvent(new HashChangeEvent('hashchange'));
     }
   });
-}
+}, 'Onboarding');
