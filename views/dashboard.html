@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Digital English Academy</title>
+    <style>
+        /* 📊 DASHBOARD STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* 🎯 SIDEBAR */
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px 0;
+            position: fixed;
+            width: 280px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .sidebar-nav {
+            padding: 24px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 32px;
+        }
+
+        .nav-section-title {
+            padding: 0 24px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-right: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .nav-item.active {
+            background: #f1f5f9;
+            color: #667eea;
+            border-right-color: #667eea;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .user-info p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* 📱 MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            padding: 24px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .notification-btn {
+            position: relative;
+            padding: 12px;
+            background: #f8fafc;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .notification-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+        }
+
+        /* 📊 STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color, #667eea);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-color, #667eea);
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.9rem;
+        }
+
+        .stat-change.positive {
+            color: #059669;
+        }
+
+        .stat-change.negative {
+            color: #dc2626;
+        }
+
+        /* 📈 CONTENT GRID */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 24px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .card-action {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* 📚 RECENT COURSES */
+        .course-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .course-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            transition: background 0.2s ease;
+        }
+
+        .course-item:hover {
+            background: #f1f5f9;
+        }
+
+        .course-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .course-info h4 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .course-info p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .course-progress {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .progress-bar {
+            width: 80px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* 🎯 QUICK ACTIONS */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            border: none;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-btn:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--action-color, #667eea);
+            color: white;
+        }
+
+        .action-info h4 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .action-info p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* 📱 RESPONSIVE */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+        }
+
+        /* 🎨 ANIMATIONS */
+        .stat-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- 🎯 SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">DEA</div>
+                    <span>Digital English Academy</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <a href="#dashboard" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="#courses" class="nav-item">
+                        <span class="nav-icon">📚</span>
+                        Mis Cursos
+                    </a>
+                    <a href="#ai-tutor" class="nav-item">
+                        <span class="nav-icon">🤖</span>
+                        Tutor IA
+                    </a>
+                    <a href="#progress" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        Mi Progreso
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Aprendizaje</div>
+                    <a href="#lessons" class="nav-item">
+                        <span class="nav-icon">🎓</span>
+                        Lecciones
+                    </a>
+                    <a href="#practice" class="nav-item">
+                        <span class="nav-icon">💪</span>
+                        Práctica
+                    </a>
+                    <a href="#certificates" class="nav-item">
+                        <span class="nav-icon">🏆</span>
+                        Certificados
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Cuenta</div>
+                    <a href="#subscription" class="nav-item">
+                        <span class="nav-icon">💎</span>
+                        Suscripción
+                    </a>
+                    <a href="#settings" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Configuración
+                    </a>
+                </div>
+            </nav>
+
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <h4 id="userName">Cargando...</h4>
+                    <p id="userPlan">Plan Gratuito</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 📱 MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1>¡Bienvenido de vuelta!</h1>
+                    <p>Continúa tu viaje de aprendizaje de inglés</p>
+                </div>
+                <div class="header-right">
+                    <button class="notification-btn">
+                        <span class="nav-icon">🔔</span>
+                        <div class="notification-badge"></div>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card" style="--accent-color: #667eea;">
+                    <div class="stat-header">
+                        <div class="stat-title">Lecciones Completadas</div>
+                        <div class="stat-icon">📚</div>
+                    </div>
+                    <div class="stat-value" id="completedLessons">24</div>
+                    <div class="stat-change positive">
+                        <span>↗️</span>
+                        <span>+3 esta semana</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #10b981;">
+                    <div class="stat-header">
+                        <div class="stat-title">Racha de Días</div>
+                        <div class="stat-icon">🔥</div>
+                    </div>
+                    <div class="stat-value" id="streakDays">12</div>
+                    <div class="stat-change positive">
+                        <span>↗️</span>
+                        <span>¡Sigue así!</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #f59e0b;">
+                    <div class="stat-header">
+                        <div class="stat-title">Tiempo de Estudio</div>
+                        <div class="stat-icon">⏱️</div>
+                    </div>
+                    <div class="stat-value" id="studyTime">45h</div>
+                    <div class="stat-change positive">
+                        <span>↗️</span>
+                        <span>+5h esta semana</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #8b5cf6;">
+                    <div class="stat-header">
+                        <div class="stat-title">Nivel Actual</div>
+                        <div class="stat-icon">🎯</div>
+                    </div>
+                    <div class="stat-value" id="currentLevel">B1</div>
+                    <div class="stat-change positive">
+                        <span>↗️</span>
+                        <span>75% a B2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Recent Courses -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Continuar Aprendiendo</h3>
+                        <a href="#courses" class="card-action">Ver todos</a>
+                    </div>
+                    <div class="card-content">
+                        <div class="course-list">
+                            <div class="course-item">
+                                <div class="course-thumbnail">B1</div>
+                                <div class="course-info">
+                                    <h4>Inglés Intermedio</h4>
+                                    <p>Gramática y conversación</p>
+                                </div>
+                                <div class="course-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 75%;"></div>
+                                    </div>
+                                    <div class="progress-text">75%</div>
+                                </div>
+                            </div>
+
+                            <div class="course-item">
+                                <div class="course-thumbnail">💼</div>
+                                <div class="course-info">
+                                    <h4>Inglés de Negocios</h4>
+                                    <p>Comunicación profesional</p>
+                                </div>
+                                <div class="course-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 45%;"></div>
+                                    </div>
+                                    <div class="progress-text">45%</div>
+                                </div>
+                            </div>
+
+                            <div class="course-item">
+                                <div class="course-thumbnail">🗣️</div>
+                                <div class="course-info">
+                                    <h4>Pronunciación</h4>
+                                    <p>Mejora tu acento</p>
+                                </div>
+                                <div class="course-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 30%;"></div>
+                                    </div>
+                                    <div class="progress-text">30%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Acciones Rápidas</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="quick-actions">
+                            <a href="#ai-tutor" class="action-btn">
+                                <div class="action-icon" style="--action-color: #667eea;">🤖</div>
+                                <div class="action-info">
+                                    <h4>Hablar con IA</h4>
+                                    <p>Practica conversación</p>
+                                </div>
+                            </a>
+
+                            <a href="#lesson" class="action-btn">
+                                <div class="action-icon" style="--action-color: #10b981;">📖</div>
+                                <div class="action-info">
+                                    <h4>Nueva Lección</h4>
+                                    <p>Continúa aprendiendo</p>
+                                </div>
+                            </a>
+
+                            <a href="#practice" class="action-btn">
+                                <div class="action-icon" style="--action-color: #f59e0b;">💪</div>
+                                <div class="action-info">
+                                    <h4>Práctica Rápida</h4>
+                                    <p>5 minutos de ejercicios</p>
+                                </div>
+                            </a>
+
+                            <a href="#subscription" class="action-btn">
+                                <div class="action-icon" style="--action-color: #8b5cf6;">💎</div>
+                                <div class="action-info">
+                                    <h4>Actualizar Plan</h4>
+                                    <p>Desbloquea más funciones</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Auth0 SDK -->
+    <script src="https://cdn.auth0.com/js/auth0/9.20.2/auth0.min.js"></script>
+
+    <script>
+        // 🔐 AUTH & USER DATA
+        let auth0Client;
+        let currentUser = null;
+
+        // Initialize Dashboard
+        async function initDashboard() {
+            try {
+                // Initialize Auth0
+                auth0Client = await createAuth0Client({
+                    domain: window.deaConfig?.auth0Domain || 'your-domain.auth0.com',
+                    clientId: window.deaConfig?.auth0ClientId || 'your-client-id',
+                    authorizationParams: {
+                        audience: window.deaConfig?.auth0Audience || 'https://denglishacademy.com/api',
+                        scope: 'openid profile email'
+                    }
+                });
+
+                // Check authentication
+                const isAuthenticated = await auth0Client.isAuthenticated();
+
+                if (!isAuthenticated) {
+                    // Redirect to login
+                    window.location.replace('/login');
+                    return;
+                }
+
+                // Get user data
+                currentUser = await auth0Client.getUser();
+                updateUserProfile(currentUser);
+
+                // Load user progress
+                await loadUserProgress();
+
+            } catch (error) {
+                console.error('Dashboard initialization failed:', error);
+                window.location.replace('/login');
+            }
+        }
+
+        // Update user profile in sidebar
+        function updateUserProfile(user) {
+            const userName = document.getElementById('userName');
+            const userAvatar = document.getElementById('userAvatar');
+            const userPlan = document.getElementById('userPlan');
+
+            if (userName) {
+                userName.textContent = user.name || user.email?.split('@')[0] || 'Usuario';
+            }
+
+            if (userAvatar) {
+                const initials = (user.name || user.email || 'U').charAt(0).toUpperCase();
+                userAvatar.textContent = initials;
+            }
+
+            // Get subscription status (mock data for now)
+            const subscription = getUserSubscription();
+            if (userPlan) {
+                userPlan.textContent = subscription.plan;
+            }
+        }
+
+        // Load user progress data
+        async function loadUserProgress() {
+            try {
+                // In production, fetch from your API
+                const progressData = await fetchUserProgress();
+                updateProgressStats(progressData);
+            } catch (error) {
+                console.error('Failed to load progress:', error);
+                // Use mock data
+                updateProgressStats(getMockProgressData());
+            }
+        }
+
+        // Update progress statistics
+        function updateProgressStats(data) {
+            const elements = {
+                completedLessons: document.getElementById('completedLessons'),
+                streakDays: document.getElementById('streakDays'),
+                studyTime: document.getElementById('studyTime'),
+                currentLevel: document.getElementById('currentLevel')
+            };
+
+            if (elements.completedLessons) {
+                elements.completedLessons.textContent = data.completedLessons;
+            }
+            if (elements.streakDays) {
+                elements.streakDays.textContent = data.streakDays;
+            }
+            if (elements.studyTime) {
+                elements.studyTime.textContent = data.studyTime;
+            }
+            if (elements.currentLevel) {
+                elements.currentLevel.textContent = data.currentLevel;
+            }
+        }
+
+        // Mock functions (replace with real API calls)
+        function getUserSubscription() {
+            return {
+                plan: 'Plan Premium',
+                status: 'active',
+                expiresAt: '2024-12-31'
+            };
+        }
+
+        async function fetchUserProgress() {
+            // Replace with real API call
+            const token = await auth0Client.getTokenSilently();
+
+            const response = await fetch('/api/user/progress', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch progress');
+            }
+
+            return response.json();
+        }
+
+        function getMockProgressData() {
+            return {
+                completedLessons: 24,
+                streakDays: 12,
+                studyTime: '45h',
+                currentLevel: 'B1'
+            };
+        }
+
+        // 🎯 NAVIGATION
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.nav-item')) {
+                e.preventDefault();
+
+                // Update active state
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                e.target.classList.add('active');
+
+                // Handle navigation
+                const href = e.target.getAttribute('href');
+                handleNavigation(href);
+            }
+        });
+
+        function handleNavigation(href) {
+            switch (href) {
+                case '#ai-tutor':
+                    window.location.href = '/ai-chat';
+                    break;
+                case '#subscription':
+                    window.location.href = '/subscription';
+                    break;
+                case '#courses':
+                    // Load courses view
+                    break;
+                case '#settings':
+                    // Load settings view
+                    break;
+                default:
+                    console.log('Navigate to:', href);
+            }
+        }
+
+        // 🚀 INITIALIZE
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // 📱 RESPONSIVE SIDEBAR
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Add mobile menu button if needed
+        if (window.innerWidth <= 1024) {
+            const header = document.querySelector('.dashboard-header .header-right');
+            const menuBtn = document.createElement('button');
+            menuBtn.innerHTML = '☰';
+            menuBtn.onclick = toggleSidebar;
+            menuBtn.style.cssText = 'background: none; border: none; font-size: 1.5rem; cursor: pointer;';
+            header.prepend(menuBtn);
+        }
+    </script>
+</body>
+
+</html>

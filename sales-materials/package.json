@@ -1,0 +1,26 @@
+{
+    "name": "dea-sales-materials",
+    "version": "1.0.0",
+    "description": "Generador de materiales de venta para Digital English Academy",
+    "main": "create-pdf-materials.js",
+    "scripts": {
+        "generate": "node create-pdf-materials.js",
+        "generate:pdfs": "node create-pdf-materials.js",
+        "generate:screenshots": "node -e \"const gen = require('./create-pdf-materials.js'); const g = new gen(); g.initialize().then(() => g.takeScreenshots()).then(() => g.cleanup());\"",
+        "install-deps": "npm install puppeteer marked",
+        "clean": "rm -rf pdfs/* screenshots/*"
+    },
+    "dependencies": {
+        "puppeteer": "^21.0.0",
+        "marked": "^9.0.0"
+    },
+    "keywords": [
+        "sales",
+        "materials",
+        "pdf",
+        "enterprise",
+        "digital-english-academy"
+    ],
+    "author": "Digital English Academy",
+    "license": "MIT"
+}

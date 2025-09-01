@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Interactivo - Digital English Academy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .demo-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .demo-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .demo-card h3 {
+            color: #4f46e5;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .demo-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: #4f46e5;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #3730a3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .feature-list li:before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+        }
+
+        .demo-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .credentials-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            color: white;
+        }
+
+        .credentials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .credential-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .credential-item h4 {
+            margin-bottom: 0.5rem;
+            color: #fbbf24;
+        }
+
+        .credential-item code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-ready {
+            background: #10b981;
+        }
+
+        .status-config {
+            background: #f59e0b;
+        }
+
+        .status-error {
+            background: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .demo-header h1 {
+                font-size: 2rem;
+            }
+
+            .demo-container {
+                padding: 1rem;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🚀 Digital English Academy</h1>
+            <p>Demo Interactivo - Plataforma Lista para Producción</p>
+        </div>
+
+        <div class="credentials-section">
+            <h2>📋 Estado del Proyecto</h2>
+            <div class="credentials-grid">
+                <div class="credential-item">
+                    <h4><span class="status-indicator status-ready"></span>Frontend</h4>
+                    <p>Aplicación React/Vanilla JS completamente funcional</p>
+                    <code>✅ Listo para producción</code>
+                </div>
+                <div class="credential-item">
+                    <h4><span class="status-indicator status-config"></span>Auth0</h4>
+                    <p>Sistema de autenticación configurado</p>
+                    <code>⚙️ Requiere credenciales</code>
+                </div>
+                <div class="credential-item">
+                    <h4><span class="status-indicator status-config"></span>Stripe</h4>
+                    <p>Integración de pagos implementada</p>
+                    <code>⚙️ Requiere credenciales</code>
+                </div>
+                <div class="credential-item">
+                    <h4><span class="status-indicator status-ready"></span>Base de Datos</h4>
+                    <p>Sistema de datos con localStorage y MongoDB</p>
+                    <code>✅ Funcional</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h3>🎯 Demo Completo</h3>
+                <p>Explora la aplicación completa con todas las funcionalidades implementadas.</p>
+                <ul class="feature-list">
+                    <li>Sistema de autenticación</li>
+                    <li>Cursos por niveles</li>
+                    <li>Lecciones interactivas</li>
+                    <li>Comunidad de aprendizaje</li>
+                    <li>Perfil de usuario</li>
+                    <li>Diseño responsive</li>
+                </ul>
+                <button class="btn" onclick="openFullDemo()">Ver Demo Completo</button>
+            </div>
+
+            <div class="demo-card">
+                <h3>⚡ Configuración Rápida</h3>
+                <p>Guía paso a paso para configurar y desplegar en producción.</p>
+                <ul class="feature-list">
+                    <li>Variables de entorno</li>
+                    <li>Credenciales de servicios</li>
+                    <li>Scripts de despliegue</li>
+                    <li>Documentación completa</li>
+                </ul>
+                <button class="btn btn-secondary" onclick="showConfig()">Ver Configuración</button>
+            </div>
+
+            <div class="demo-card">
+                <h3>📊 Panel de Administración</h3>
+                <p>Sistema completo de gestión de contenido y usuarios.</p>
+                <ul class="feature-list">
+                    <li>Gestión de cursos</li>
+                    <li>Analytics de usuarios</li>
+                    <li>Moderación de comunidad</li>
+                    <li>Reportes de progreso</li>
+                </ul>
+                <button class="btn" onclick="openAdminDemo()">Ver Panel Admin</button>
+            </div>
+
+            <div class="demo-card">
+                <h3>💳 Sistema de Pagos</h3>
+                <p>Integración completa con Stripe para suscripciones.</p>
+                <ul class="feature-list">
+                    <li>Planes de suscripción</li>
+                    <li>Pagos seguros</li>
+                    <li>Gestión de facturas</li>
+                    <li>Cancelaciones</li>
+                </ul>
+                <button class="btn" onclick="openPaymentDemo()">Ver Pagos</button>
+            </div>
+
+            <div class="demo-card">
+                <h3>📱 PWA & Mobile</h3>
+                <p>Aplicación web progresiva optimizada para móviles.</p>
+                <ul class="feature-list">
+                    <li>Instalable en móvil</li>
+                    <li>Funciona offline</li>
+                    <li>Notificaciones push</li>
+                    <li>Diseño adaptativo</li>
+                </ul>
+                <button class="btn" onclick="openMobileDemo()">Ver Móvil</button>
+            </div>
+
+            <div class="demo-card">
+                <h3>🔧 Herramientas de Desarrollo</h3>
+                <p>Suite completa de herramientas para desarrollo y mantenimiento.</p>
+                <ul class="feature-list">
+                    <li>Tests automatizados</li>
+                    <li>Monitoreo de errores</li>
+                    <li>Analytics de rendimiento</li>
+                    <li>Documentación técnica</li>
+                </ul>
+                <button class="btn btn-secondary" onclick="showDevTools()">Ver Herramientas</button>
+            </div>
+        </div>
+
+        <div id="demo-viewer" style="display: none; margin-top: 2rem;">
+            <h2 style="color: white; margin-bottom: 1rem;">Vista Previa</h2>
+            <iframe id="demo-frame" class="demo-iframe" src=""></iframe>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="btn btn-secondary" onclick="closeDemo()">Cerrar Vista Previa</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openFullDemo() {
+            document.getElementById('demo-viewer').style.display = 'block';
+            document.getElementById('demo-frame').src = '../index.html';
+            document.getElementById('demo-viewer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openAdminDemo() {
+            document.getElementById('demo-viewer').style.display = 'block';
+            document.getElementById('demo-frame').src = '../index.html#/admin';
+            document.getElementById('demo-viewer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openPaymentDemo() {
+            document.getElementById('demo-viewer').style.display = 'block';
+            document.getElementById('demo-frame').src = '../index.html#/premium';
+            document.getElementById('demo-viewer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openMobileDemo() {
+            document.getElementById('demo-viewer').style.display = 'block';
+            const frame = document.getElementById('demo-frame');
+            frame.src = '../index.html';
+            frame.style.width = '375px';
+            frame.style.height = '667px';
+            frame.style.margin = '0 auto';
+            frame.style.display = 'block';
+            document.getElementById('demo-viewer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showConfig() {
+            window.open('../GUIA-CONFIGURACION-CLIENTE.md', '_blank');
+        }
+
+        function showDevTools() {
+            window.open('../docs/API-INTEGRATION.md', '_blank');
+        }
+
+        function closeDemo() {
+            document.getElementById('demo-viewer').style.display = 'none';
+            const frame = document.getElementById('demo-frame');
+            frame.style.width = '100%';
+            frame.style.height = '600px';
+            frame.style.margin = '0';
+        }
+
+        // Auto-scroll to top on load
+        window.addEventListener('load', () => {
+            window.scrollTo(0, 0);
+        });
+    </script>
+</body>
+
+</html>

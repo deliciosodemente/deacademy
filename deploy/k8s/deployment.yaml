@@ -1,0 +1,131 @@
+# Kubernetes deployment for Digital English Academy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dea-app
+  namespace: dea-production
+  labels:
+    app: dea-app
+    version: v1.0.0
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: dea-app
+  template:
+    metadata:
+      labels:
+        app: dea-app
+        version: v1.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: dea-app
+          image: digitalenglishacademy/app:latest
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 443
+              name: https
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: TZ
+              value: "UTC"
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: dea-secrets
+                  key: redis-url
+            - name: MONGODB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: dea-secrets
+                  key: mongodb-url
+            - name: AUTH0_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: dea-config
+                  key: auth0-domain
+            - name: AUTH0_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: dea-secrets
+                  key: auth0-client-id
+            - name: AUTH0_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: dea-secrets
+                  key: auth0-client-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+            - name: ssl-certs
+              mountPath: /etc/nginx/ssl
+              readOnly: true
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+        - name: ssl-certs
+          secret:
+            secretName: ssl-certs
+      imagePullSecrets:
+        - name: registry-secret
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dea-app-service
+  namespace: dea-production
+  labels:
+    app: dea-app
+spec:
+  selector:
+    app: dea-app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: 443
+      protocol: TCP
+  type: ClusterIP

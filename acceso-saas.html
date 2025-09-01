@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Acceso a Digital English Academy SAAS</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .link-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            color: #333;
+        }
+
+        .link-card:hover {
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+        }
+
+        .link-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .link-url {
+            color: #666;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .status {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 Digital English Academy SAAS</h1>
+
+        <div class="status">
+            ✅ <strong>SERVIDOR ONLINE</strong> - Tu SAAS está funcionando perfectamente
+        </div>
+
+        <a href="http://34.196.15.155/auth0-login.html" class="link-card" target="_blank">
+            <div class="link-title">🔐 LOGIN & REGISTRO</div>
+            <div class="link-url">http://34.196.15.155/auth0-login.html</div>
+        </a>
+
+        <a href="http://34.196.15.155/dashboard.html" class="link-card" target="_blank">
+            <div class="link-title">📊 DASHBOARD PRINCIPAL</div>
+            <div class="link-url">http://34.196.15.155/dashboard.html</div>
+        </a>
+
+        <a href="http://34.196.15.155/subscription.html" class="link-card" target="_blank">
+            <div class="link-title">💳 SUSCRIPCIONES & PAGOS</div>
+            <div class="link-url">http://34.196.15.155/subscription.html</div>
+        </a>
+
+        <a href="http://34.196.15.155/ai-chat.html" class="link-card" target="_blank">
+            <div class="link-title">🤖 CHAT CON IA</div>
+            <div class="link-url">http://34.196.15.155/ai-chat.html</div>
+        </a>
+
+        <div style="margin-top: 30px; text-align: center; color: #666;">
+            <p><strong>💡 Tip:</strong> Guarda esta página en favoritos para acceso rápido</p>
+            <p><strong>📱 Móvil:</strong> Todas las páginas son responsive</p>
+            <p><strong>🌐 Dominio:</strong> Próximamente en denglishacademy.com</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh status cada 30 segundos
+        setInterval(() => {
+            fetch('http://34.196.15.155/')
+                .then(() => {
+                    document.querySelector('.status').innerHTML = '✅ <strong>SERVIDOR ONLINE</strong> - Tu SAAS está funcionando perfectamente';
+                })
+                .catch(() => {
+                    document.querySelector('.status').innerHTML = '⚠️ <strong>VERIFICANDO CONEXIÓN</strong> - Reintentando...';
+                });
+        }, 30000);
+    </script>
+</body>
+
+</html>

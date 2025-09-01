@@ -1,0 +1,141 @@
+# Production Prometheus Configuration for Digital English Academy
+# Optimized for denglishacademy.com monitoring
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: "dea-production"
+    environment: "production"
+    domain: "denglishacademy.com"
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Application instances
+  - job_name: "dea-app"
+    static_configs:
+      - targets:
+          - "app-1:3000"
+          - "app-2:3000"
+    scrape_interval: 15s
+    metrics_path: /metrics
+    scrape_timeout: 10s
+    params:
+      format: ["prometheus"]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+      - source_labels: [__address__]
+        regex: "([^:]+):(.*)"
+        target_label: __address__
+        replacement: "${1}:3000"
+
+  # Nginx load balancer
+  - job_name: "nginx-lb"
+    static_configs:
+      - targets: ["nginx-lb:9113"]
+    scrape_interval: 15s
+    metrics_path: /metrics
+
+  # CDN server
+  - job_name: "cdn"
+    static_configs:
+      - targets: ["cdn:9113"]
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # MongoDB monitoring
+  - job_name: "mongodb"
+    static_configs:
+      - targets:
+          - "mongodb-primary:9216"
+          - "mongodb-secondary:9216"
+    scrape_interval: 30s
+    metrics_path: /metrics
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: "mongodb-([^:]+):.*"
+        target_label: mongodb_role
+        replacement: "${1}"
+
+  # Redis monitoring
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis-cluster:9121"]
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Node exporter for system metrics
+  - job_name: "node-exporter"
+    static_configs:
+      - targets:
+          - "node-exporter:9100"
+    scrape_interval: 15s
+    metrics_path: /metrics
+
+  # cAdvisor for container metrics
+  - job_name: "cadvisor"
+    static_configs:
+      - targets: ["cadvisor:8080"]
+    scrape_interval: 15s
+    metrics_path: /metrics
+
+  # Blackbox exporter for external monitoring
+  - job_name: "blackbox"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - https://denglishacademy.com
+          - https://denglishacademy.com/health
+          - https://grafana.denglishacademy.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # Custom application metrics
+  - job_name: "dea-custom-metrics"
+    static_configs:
+      - targets:
+          - "app-1:3001"
+          - "app-2:3001"
+    scrape_interval: 30s
+    metrics_path: /custom-metrics
+    honor_labels: true
+
+# Remote write configuration (for long-term storage)
+# remote_write:
+#   - url: "https://prometheus-remote-write-endpoint.com/api/v1/write"
+#     basic_auth:
+#       username: "your-username"
+#       password: "your-password"
+
+# Storage configuration
+storage:
+  tsdb:
+    retention.time: 30d
+    retention.size: 10GB
+    wal-compression: true

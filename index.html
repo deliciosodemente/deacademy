@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+
+<head>
+  <!-- Basic Meta Tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- Primary Meta Tags -->
+  <title>Digital English Academy — Aprende inglés con confianza</title>
+  <meta name="title" content="Digital English Academy — Aprende inglés con confianza" />
+  <meta name="description"
+    content="Plataforma integral de aprendizaje de inglés: cursos por niveles, lecciones interactivas, comunidad y progreso personal. Aprende inglés de forma efectiva con nuestra metodología innovadora." />
+  <meta name="keywords"
+    content="aprender inglés, cursos de inglés, inglés online, lecciones interactivas, comunidad de aprendizaje, inglés conversacional, gramática inglesa, vocabulario inglés" />
+  <meta name="author" content="Digital English Academy" />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="Spanish" />
+  <meta name="revisit-after" content="7 days" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://denglishacademy.com/" />
+  <meta property="og:title" content="Digital English Academy — Aprende inglés con confianza" />
+  <meta property="og:description"
+    content="Plataforma integral de aprendizaje de inglés: cursos por niveles, lecciones interactivas, comunidad y progreso personal." />
+  <meta property="og:image" content="https://denglishacademy.com/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Digital English Academy" />
+  <meta property="og:locale" content="es_ES" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://denglishacademy.com/" />
+  <meta property="twitter:title" content="Digital English Academy — Aprende inglés con confianza" />
+  <meta property="twitter:description"
+    content="Plataforma integral de aprendizaje de inglés: cursos por niveles, lecciones interactivas, comunidad y progreso personal." />
+  <meta property="twitter:image" content="https://denglishacademy.com/twitter-image.jpg" />
+  <meta property="twitter:creator" content="@DigitalEnglishAcademy" />
+
+  <!-- Favicon and Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a66ff" />
+  <meta name="msapplication-TileColor" content="#0a66ff" />
+  <meta name="msapplication-config" content="/browserconfig.xml" />
+
+  <!-- iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Digital English Academy" />
+
+  <!-- Android Chrome -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="Digital English Academy" />
+
+  <!-- DNS Prefetch and Preconnect -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+  <link rel="dns-prefetch" href="//cdn.auth0.com" />
+  <link rel="dns-prefetch" href="//js.stripe.com" />
+  <link rel="dns-prefetch" href="//unpkg.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.auth0.com" />
+
+  <!-- Critical CSS Inline (placeholder for build process) -->
+  <style id="critical-css">
+    /* Critical CSS will be inlined here during build */
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 6px;
+    }
+
+    .skip-link:focus {
+      top: 6px;
+    }
+  </style>
+
+  <!-- Preload Critical Resources -->
+  <link rel="preload" href="./styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet" href="./styles.css" />
+  </noscript>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap"
+    as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" />
+  </noscript>
+
+  <!-- Preload Critical Scripts -->
+  <link rel="preload" href="./app.js" as="script" />
+  <link rel="modulepreload" href="./router.js" />
+  <link rel="modulepreload" href="./lib/app-bootstrap.js" />
+  <link rel="modulepreload" href="./lib/configuration-manager.js" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "Digital English Academy",
+    "description": "Plataforma integral de aprendizaje de inglés con cursos por niveles, lecciones interactivas y comunidad de aprendizaje.",
+    "url": "https://denglishacademy.com",
+    "logo": "https://denglishacademy.com/logo.png",
+    "sameAs": [
+      "https://twitter.com/DigitalEnglishAcademy",
+      "https://facebook.com/DigitalEnglishAcademy"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+1-555-123-4567",
+      "contactType": "customer service",
+      "availableLanguage": ["Spanish", "English"]
+    },
+    "offers": {
+      "@type": "Offer",
+      "category": "Education",
+      "name": "Cursos de Inglés Online",
+      "description": "Cursos completos de inglés desde principiante hasta avanzado"
+    }
+  }
+  </script>
+
+  <!-- Performance and Analytics -->
+  <script>
+    // Performance mark for initialization start
+    performance.mark('dea-init-start');
+
+    // Critical resource timeout
+    setTimeout(() => {
+      if (!window.deaInitialized) {
+        console.warn('DEA: Initialization timeout - falling back to basic mode');
+        document.body.classList.add('dea-fallback-mode');
+      }
+    }, 10000);
+  </script>
+
+  <!-- Import Map for ESM libraries -->
+  <script type="importmap">
+  {
+    "imports": {
+      "dayjs": "https://esm.sh/dayjs@1.11.11",
+      "dayjs/plugin/relativeTime": "https://esm.sh/dayjs@1.11.11/plugin/relativeTime",
+      "dayjs/locale/es": "https://esm.sh/dayjs@1.11.11/locale/es"
+    }
+  }
+  </script>
+  <!-- Auth0 SPA SDK -->
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js" defer></script>
+  <!-- Stripe.js (for future card elements; payment links use window.open) -->
+  <script src="https://js.stripe.com/v3/" defer></script>
+  <script>
+    // Configuration placeholders – replace in WordPress or via script tag before app.js
+    window.deaConfig = {
+      auth0Domain: window.deaConfig?.auth0Domain || "",
+      auth0ClientId: window.deaConfig?.auth0ClientId || "",
+      stripePaymentLink: window.deaConfig?.stripePaymentLink || ""
+    };
+  </script>
+</head>
+
+<body>
+  <!-- Skip Links for Accessibility -->
+  <div class="skip-links" aria-label="Enlaces de navegación rápida">
+    <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+    <a class="skip-link" href="#navigation">Saltar a la navegación</a>
+    <a class="skip-link" href="#footer">Saltar al pie de página</a>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div id="loading-indicator" class="loading-indicator" aria-live="polite" aria-label="Cargando aplicación">
+    <div class="loading-spinner" aria-hidden="true"></div>
+    <span class="loading-text">Cargando Digital English Academy...</span>
+  </div>
+
+  <!-- Site Header -->
+  <header class="site-header" role="banner" id="header">
+    <div class="container header-inner">
+      <!-- Brand/Logo -->
+      <a href="#/" class="brand" aria-label="Ir al inicio de Digital English Academy">
+        <div class="brand-mark" aria-hidden="true">DE</div>
+        <span class="brand-name">Digital English Academy</span>
+      </a>
+
+      <!-- Primary Navigation -->
+      <nav class="primary-nav" role="navigation" aria-label="Navegación principal" id="navigation">
+        <ul class="nav-list" role="menubar">
+          <li role="none">
+            <a href="#/courses" class="nav-link" role="menuitem" aria-describedby="courses-desc">
+              <i class="ph ph-books" aria-hidden="true"></i>
+              <span>Cursos</span>
+              <span id="courses-desc" class="sr-only">Explorar cursos de inglés por niveles</span>
+            </a>
+          </li>
+          <li role="none">
+            <a href="#/lesson" class="nav-link" role="menuitem" aria-describedby="lesson-desc">
+              <i class="ph ph-play-circle" aria-hidden="true"></i>
+              <span>Lección</span>
+              <span id="lesson-desc" class="sr-only">Acceder a lecciones interactivas</span>
+            </a>
+          </li>
+          <li role="none">
+            <a href="#/community" class="nav-link" role="menuitem" aria-describedby="community-desc">
+              <i class="ph ph-chats-circle" aria-hidden="true"></i>
+              <span>Comunidad</span>
+              <span id="community-desc" class="sr-only">Participar en la comunidad de aprendizaje</span>
+            </a>
+          </li>
+          <li role="none">
+            <a href="#/profile" class="nav-link" role="menuitem" aria-describedby="profile-desc">
+              <i class="ph ph-user-circle" aria-hidden="true"></i>
+              <span>Perfil</span>
+              <span id="profile-desc" class="sr-only">Ver y editar perfil personal</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Call-to-Action Buttons -->
+      <div class="cta-group" role="group" aria-label="Acciones de cuenta">
+        <button type="button" class="btn btn-ghost" id="loginBtn" aria-describedby="login-desc">
+          Iniciar sesión
+          <span id="login-desc" class="sr-only">Acceder a tu cuenta existente</span>
+        </button>
+        <button type="button" class="btn btn-primary" id="signupBtn" aria-describedby="signup-desc">
+          Probar gratis
+          <span id="signup-desc" class="sr-only">Crear cuenta nueva y probar gratis</span>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobileNav"
+        aria-label="Abrir menú de navegación móvil">
+        <i class="ph ph-list" aria-hidden="true"></i>
+        <span class="sr-only">Menú</span>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" id="mobileNav" role="navigation" aria-label="Navegación móvil" aria-hidden="true">
+      <ul class="mobile-nav-list" role="menubar">
+        <li role="none">
+          <a href="#/courses" class="nav-link" role="menuitem">
+            <i class="ph ph-books" aria-hidden="true"></i>
+            <span>Cursos</span>
+          </a>
+        </li>
+        <li role="none">
+          <a href="#/lesson" class="nav-link" role="menuitem">
+            <i class="ph ph-play-circle" aria-hidden="true"></i>
+            <span>Lección</span>
+          </a>
+        </li>
+        <li role="none">
+          <a href="#/community" class="nav-link" role="menuitem">
+            <i class="ph ph-chats-circle" aria-hidden="true"></i>
+            <span>Comunidad</span>
+          </a>
+        </li>
+        <li role="none">
+          <a href="#/profile" class="nav-link" role="menuitem">
+            <i class="ph ph-user-circle" aria-hidden="true"></i>
+            <span>Perfil</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Background Video with Accessibility Considerations -->
+  <div class="app-bg dremina" aria-hidden="true" role="presentation">
+    <video class="app-bg-video" autoplay muted loop playsinline aria-hidden="true" poster="/video-poster.jpg">
+      <source src="/efe50645-3bff-48ed-8183-5cac009e4469.mp4" type="video/mp4">
+      <source src="/efe50645-3bff-48ed-8183-5cac009e4469.webm" type="video/webm">
+      <!-- Fallback for browsers that don't support video -->
+      <img src="/video-poster.jpg" alt="" role="presentation">
+    </video>
+    <div class="app-bg-overlay" aria-hidden="true"></div>
+  </div>
+
+  <!-- Main Content Area -->
+  <main id="main-content" tabindex="-1" role="main" class="view" aria-label="Contenido principal de la aplicación">
+    <!-- Dynamic content will be loaded here -->
+    <div class="main-content-placeholder" aria-live="polite">
+      <div class="content-loading" aria-label="Cargando contenido">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <p>Preparando tu experiencia de aprendizaje...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ARIA Live Regions for Screen Reader Announcements -->
+  <div id="aria-live-polite" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+  <div id="aria-live-assertive" aria-live="assertive" aria-atomic="true" class="sr-only"></div>
+  <div id="aria-live-status" role="status" aria-live="polite" class="sr-only"></div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer" role="contentinfo" id="footer">
+    <div class="container footer-inner">
+      <!-- Footer Brand -->
+      <div class="footer-brand">
+        <div class="brand-mark" aria-hidden="true">DE</div>
+        <span class="brand-name">Digital English Academy</span>
+        <p class="footer-tagline">Aprende inglés con confianza</p>
+      </div>
+
+      <!-- Footer Navigation -->
+      <nav class="footer-nav" role="navigation" aria-label="Enlaces del pie de página">
+        <h3 class="footer-nav-title sr-only">Navegación del sitio</h3>
+        <ul class="footer-nav-list">
+          <li><a href="#/courses" aria-label="Ir a cursos">Cursos</a></li>
+          <li><a href="#/community" aria-label="Ir a comunidad">Comunidad</a></li>
+          <li><a href="#/profile" aria-label="Ir a perfil">Perfil</a></li>
+          <li><a href="#/" aria-label="Ir al inicio">Inicio</a></li>
+        </ul>
+      </nav>
+
+      <!-- Footer Links -->
+      <div class="footer-links">
+        <h3 class="footer-links-title sr-only">Enlaces adicionales</h3>
+        <ul class="footer-links-list">
+          <li><a href="#/privacy" aria-label="Política de privacidad">Privacidad</a></li>
+          <li><a href="#/terms" aria-label="Términos de servicio">Términos</a></li>
+          <li><a href="#/contact" aria-label="Contacto">Contacto</a></li>
+          <li><a href="#/help" aria-label="Ayuda">Ayuda</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal Information -->
+      <div class="footer-legal">
+        <p class="legal">
+          © <span id="year"></span> Digital English Academy. Todos los derechos reservados.
+        </p>
+        <p class="accessibility-statement">
+          <a href="#/accessibility" aria-label="Declaración de accesibilidad">
+            Declaración de Accesibilidad
+          </a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Phosphor Icons (loaded after critical content) -->
+  <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+
+  <!-- Main Application Script -->
+  <script type="module" src="./app.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
+
+  <!-- Performance Monitoring -->
+  <script>
+    // Mark when DOM is fully loaded
+    performance.mark('dea-dom-loaded');
+
+    // Measure initialization time
+    window.addEventListener('deaInitialized', () => {
+      performance.mark('dea-init-complete');
+      performance.measure('dea-total-init', 'dea-init-start', 'dea-init-complete');
+
+      const measure = performance.getEntriesByName('dea-total-init')[0];
+      console.log(`🚀 DEA initialized in ${measure.duration.toFixed(2)}ms`);
+    });
+  </script>
+
+  <!-- Accessibility Enhancements -->
+  <script>
+    // Reduce motion for users who prefer it
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.body.classList.add('reduce-motion');
+    }
+
+    // High contrast mode detection
+    if (window.matchMedia('(prefers-contrast: high)').matches) {
+      document.body.classList.add('high-contrast');
+    }
+
+    // Focus management for skip links
+    document.querySelectorAll('.skip-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          target.focus();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+  <!-- Error Fallback -->
+  <noscript>
+    <div class="noscript-message">
+      <h1>JavaScript Requerido</h1>
+      <p>Digital English Academy requiere JavaScript para funcionar correctamente. Por favor, habilita JavaScript en tu
+        navegador.</p>
+    </div>
+    <style>
+      .noscript-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        z-index: 10000;
+      }
+    </style>
+  </noscript>
+</body>
+
+</html>

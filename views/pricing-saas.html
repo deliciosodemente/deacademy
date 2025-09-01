@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precios - Digital English Academy</title>
+    <style>
+        /* 🎨 ESTILOS PARA PÁGINA DE PRECIOS SAAS */
+        .pricing-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .pricing-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .pricing-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: -50px auto 80px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .pricing-card.popular {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.popular::before {
+            content: "MÁS POPULAR";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .currency {
+            font-size: 1.2rem;
+            color: #666;
+            margin-right: 5px;
+        }
+
+        .amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .period {
+            font-size: 1rem;
+            color: #666;
+            margin-left: 5px;
+        }
+
+        .plan-description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 40px;
+        }
+
+        .plan-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li::before {
+            content: "✅";
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .plan-features li.unavailable::before {
+            content: "❌";
+        }
+
+        .plan-features li.unavailable {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .subscription-btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subscription-btn.free {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #dee2e6;
+        }
+
+        .subscription-btn.free:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .subscription-btn.premium {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .subscription-btn.premium:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+            transform: translateY(-2px);
+        }
+
+        .subscription-btn.pro {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .subscription-btn.pro:hover {
+            background: linear-gradient(135deg, #e081e9, #e3455a);
+            transform: translateY(-2px);
+        }
+
+        .subscription-btn.enterprise {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .subscription-btn.enterprise:hover {
+            background: linear-gradient(135deg, #3d8bfe, #00d4fe);
+            transform: translateY(-2px);
+        }
+
+        .subscription-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .faq-section {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .faq-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #333;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 20px;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background: #e9ecef;
+        }
+
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-answer.active {
+            padding: 20px;
+            max-height: 200px;
+        }
+
+        .guarantee-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .guarantee-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .guarantee-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .guarantee-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .guarantee-text {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* 📱 RESPONSIVE */
+        @media (max-width: 768px) {
+            .pricing-hero h1 {
+                font-size: 2rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .pricing-card.popular {
+                transform: none;
+            }
+
+            .amount {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* 🎨 ANIMACIONES */
+        .pricing-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .pricing-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .pricing-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .pricing-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .pricing-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 🎯 HERO SECTION -->
+    <section class="pricing-hero">
+        <h1>Elige tu Plan Perfecto</h1>
+        <p>Aprende inglés con IA avanzada, profesores expertos y una comunidad global. Comienza gratis y actualiza
+            cuando estés listo.</p>
+    </section>
+
+    <!-- 💳 PRICING CARDS -->
+    <div class="pricing-container">
+        <div class="pricing-grid">
+            <!-- 🆓 PLAN GRATUITO -->
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <div class="plan-name">Plan Gratuito</div>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">0</span>
+                        <span class="period">/mes</span>
+                    </div>
+                    <div class="plan-description">Perfecto para comenzar tu viaje</div>
+                </div>
+
+                <ul class="plan-features">
+                    <li>Acceso a cursos básicos</li>
+                    <li>10 consultas IA por mes</li>
+                    <li>Comunidad de estudiantes</li>
+                    <li>Certificados básicos</li>
+                    <li class="unavailable">Tutor IA personalizado</li>
+                    <li class="unavailable">Clases en vivo</li>
+                    <li class="unavailable">Soporte prioritario</li>
+                </ul>
+
+                <button class="subscription-btn free" onclick="selectPlan('free')">
+                    <span class="loading-spinner"></span>
+                    Comenzar Gratis
+                </button>
+            </div>
+
+            <!-- 💎 PLAN PREMIUM -->
+            <div class="pricing-card popular">
+                <div class="plan-header">
+                    <div class="plan-name">Plan Premium</div>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">29</span>
+                        <span class="period">/mes</span>
+                    </div>
+                    <div class="plan-description">Ideal para estudiantes serios</div>
+                </div>
+
+                <ul class="plan-features">
+                    <li>Todos los cursos disponibles</li>
+                    <li>100 consultas IA por mes</li>
+                    <li>Tutor IA personalizado</li>
+                    <li>Certificados oficiales</li>
+                    <li>Soporte prioritario</li>
+                    <li>Descarga de contenido</li>
+                    <li>Clases en vivo semanales</li>
+                </ul>
+
+                <button class="subscription-btn premium" onclick="selectPlan('premium')">
+                    <span class="loading-spinner"></span>
+                    Suscribirse Ahora
+                </button>
+            </div>
+
+            <!-- 🚀 PLAN PRO -->
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <div class="plan-name">Plan Pro</div>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">99</span>
+                        <span class="period">/mes</span>
+                    </div>
+                    <div class="plan-description">Para profesionales y empresas</div>
+                </div>
+
+                <ul class="plan-features">
+                    <li>Todo del Plan Premium</li>
+                    <li>1000 consultas IA por mes</li>
+                    <li>IA sin límites los fines de semana</li>
+                    <li>Sesiones 1-on-1 con profesores</li>
+                    <li>Cursos empresariales</li>
+                    <li>API access para desarrolladores</li>
+                    <li>Análisis de progreso avanzado</li>
+                    <li>Soporte 24/7</li>
+                </ul>
+
+                <button class="subscription-btn pro" onclick="selectPlan('pro')">
+                    <span class="loading-spinner"></span>
+                    Obtener Plan Pro
+                </button>
+            </div>
+
+            <!-- 🏢 PLAN EMPRESARIAL -->
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <div class="plan-name">Plan Empresarial</div>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">299</span>
+                        <span class="period">/mes</span>
+                    </div>
+                    <div class="plan-description">Solución completa para equipos</div>
+                </div>
+
+                <ul class="plan-features">
+                    <li>Todo del Plan Pro</li>
+                    <li>IA ilimitada</li>
+                    <li>Cursos personalizados</li>
+                    <li>Dashboard de administración</li>
+                    <li>Múltiples usuarios (hasta 50)</li>
+                    <li>Integración con LMS</li>
+                    <li>Reportes avanzados</li>
+                    <li>Gerente de cuenta dedicado</li>
+                </ul>
+
+                <button class="subscription-btn enterprise" onclick="selectPlan('enterprise')">
+                    <span class="loading-spinner"></span>
+                    Contactar Ventas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ❓ FAQ SECTION -->
+    <section class="faq-section">
+        <h2 class="faq-title">Preguntas Frecuentes</h2>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                ¿Puedo cambiar de plan en cualquier momento?
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                Sí, puedes actualizar o degradar tu plan en cualquier momento. Los cambios se aplicarán en tu próximo
+                ciclo de facturación.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                ¿Hay algún compromiso a largo plazo?
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                No, todos nuestros planes son mensuales sin compromiso. Puedes cancelar en cualquier momento desde tu
+                panel de control.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                ¿Qué incluye el tutor IA personalizado?
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                El tutor IA se adapta a tu nivel y estilo de aprendizaje, proporciona retroalimentación instantánea,
+                corrige pronunciación y crea ejercicios personalizados.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                ¿Los certificados son reconocidos oficialmente?
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                Sí, nuestros certificados están respaldados por instituciones educativas reconocidas y son válidos para
+                propósitos académicos y profesionales.
+            </div>
+        </div>
+    </section>
+
+    <!-- 🛡️ GUARANTEE SECTION -->
+    <section class="guarantee-section">
+        <div class="guarantee-content">
+            <div class="guarantee-icon">🛡️</div>
+            <h2 class="guarantee-title">Garantía de 30 Días</h2>
+            <p class="guarantee-text">
+                Estamos tan seguros de que amarás Digital English Academy que ofrecemos una garantía completa de
+                reembolso de 30 días.
+                Si no estás completamente satisfecho, te devolvemos tu dinero, sin preguntas.
+            </p>
+        </div>
+    </section>
+
+    <!-- 🔧 JAVASCRIPT -->
+    <script>
+        // 💳 FUNCIÓN PARA SELECCIONAR PLAN
+        async function selectPlan(planType) {
+            const button = event.target;
+            const spinner = button.querySelector('.loading-spinner');
+
+            // Mostrar loading
+            button.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                if (planType === 'free') {
+                    // Plan gratuito - redirigir a registro
+                    window.location.href = '/register';
+                    return;
+                }
+
+                if (planType === 'enterprise') {
+                    // Plan empresarial - contactar ventas
+                    window.location.href = '/contact-sales';
+                    return;
+                }
+
+                // Verificar autenticación
+                if (!window.deaAuth?.manager?.isUserAuthenticated()) {
+                    // Guardar plan seleccionado y redirigir a login
+                    localStorage.setItem('selectedPlan', planType);
+                    await window.deaAuth.manager.loginWithRedirect();
+                    return;
+                }
+
+                // Cargar Stripe manager si no está disponible
+                if (!window.stripeManager) {
+                    await loadStripeManager();
+                }
+
+                // Obtener datos del usuario
+                const user = await window.deaAuth.manager.getUser();
+
+                // Configuración de precios
+                const priceIds = {
+                    premium: 'price_premium_monthly',
+                    pro: 'price_pro_monthly'
+                };
+
+                // Crear sesión de checkout
+                await window.stripeManager.createSubscription(
+                    priceIds[planType],
+                    user.sub,
+                    user.email
+                );
+
+            } catch (error) {
+                console.error('Error en suscripción:', error);
+                alert('Error procesando suscripción. Por favor, intenta nuevamente.');
+            } finally {
+                // Ocultar loading
+                button.disabled = false;
+                spinner.style.display = 'none';
+            }
+        }
+
+        // 📚 CARGAR STRIPE MANAGER
+        async function loadStripeManager() {
+            if (window.stripeManager) return;
+
+            try {
+                const module = await import('/config/stripe-products.js');
+                window.stripeManager = module.stripeManager;
+                await window.stripeManager.initialize();
+            } catch (error) {
+                console.error('Error cargando Stripe manager:', error);
+                throw new Error('Error inicializando sistema de pagos');
+            }
+        }
+
+        // ❓ TOGGLE FAQ
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('span');
+
+            answer.classList.toggle('active');
+            icon.textContent = answer.classList.contains('active') ? '-' : '+';
+        }
+
+        // 🚀 INICIALIZACIÓN
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Cargar Stripe manager
+                await loadStripeManager();
+
+                // Verificar plan seleccionado después del login
+                const selectedPlan = localStorage.getItem('selectedPlan');
+                if (selectedPlan && window.deaAuth?.manager?.isUserAuthenticated()) {
+                    localStorage.removeItem('selectedPlan');
+
+                    // Auto-seleccionar plan después del login
+                    setTimeout(() => {
+                        const planButton = document.querySelector(`[onclick="selectPlan('${selectedPlan}')"]`);
+                        if (planButton) {
+                            planButton.click();
+                        }
+                    }, 1000);
+                }
+
+                // Actualizar UI basada en suscripción actual
+                if (window.stripeManager) {
+                    await window.stripeManager.updateSubscriptionUI();
+                }
+
+            } catch (error) {
+                console.warn('Error en inicialización de precios:', error);
+            }
+        });
+
+        // 📊 ANALYTICS
+        function trackPlanSelection(plan) {
+            if (window.gtag) {
+                gtag('event', 'select_plan', {
+                    'plan_type': plan,
+                    'page_location': window.location.href
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

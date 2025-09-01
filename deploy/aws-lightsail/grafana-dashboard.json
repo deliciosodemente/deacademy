@@ -1,0 +1,242 @@
+{
+    "dashboard": {
+        "id": null,
+        "title": "Digital English Academy - Demo Dashboard",
+        "tags": [
+            "demo",
+            "dea",
+            "monitoring"
+        ],
+        "timezone": "browser",
+        "panels": [
+            {
+                "id": 1,
+                "title": "🚀 Estado del Sistema",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "up",
+                        "legendFormat": "Servicios Online"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "red",
+                                    "value": 0
+                                },
+                                {
+                                    "color": "green",
+                                    "value": 1
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            {
+                "id": 2,
+                "title": "💻 CPU Usage",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+                        "legendFormat": "CPU %"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "min": 0,
+                        "max": 100,
+                        "unit": "percent"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 9,
+                    "x": 6,
+                    "y": 0
+                }
+            },
+            {
+                "id": 3,
+                "title": "🧠 Memory Usage",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+                        "legendFormat": "Memory %"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "min": 0,
+                        "max": 100,
+                        "unit": "percent"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 9,
+                    "x": 15,
+                    "y": 0
+                }
+            },
+            {
+                "id": 4,
+                "title": "🌐 Network Traffic",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "irate(node_network_receive_bytes_total[5m])",
+                        "legendFormat": "Received"
+                    },
+                    {
+                        "expr": "irate(node_network_transmit_bytes_total[5m])",
+                        "legendFormat": "Transmitted"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "unit": "bytes"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 8
+                }
+            },
+            {
+                "id": 5,
+                "title": "🐳 Container Status",
+                "type": "table",
+                "targets": [
+                    {
+                        "expr": "container_last_seen",
+                        "legendFormat": "{{name}}"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 8
+                }
+            },
+            {
+                "id": 6,
+                "title": "📊 Request Rate",
+                "type": "singlestat",
+                "targets": [
+                    {
+                        "expr": "sum(rate(container_network_receive_packets_total[5m]))",
+                        "legendFormat": "Requests/sec"
+                    }
+                ],
+                "valueName": "current",
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 0,
+                    "y": 16
+                }
+            },
+            {
+                "id": 7,
+                "title": "⚡ Auto-scaling Status",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "count(up == 1)",
+                        "legendFormat": "Active Instances"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "red",
+                                    "value": 0
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 1
+                                },
+                                {
+                                    "color": "green",
+                                    "value": 2
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 6,
+                    "y": 16
+                }
+            },
+            {
+                "id": 8,
+                "title": "💾 Disk Usage",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\"})",
+                        "legendFormat": "Disk Usage %"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "min": 0,
+                        "max": 100,
+                        "unit": "percent"
+                    }
+                ],
+                "gridPos": {
+                    "h": 4,
+                    "w": 12,
+                    "x": 12,
+                    "y": 16
+                }
+            }
+        ],
+        "time": {
+            "from": "now-1h",
+            "to": "now"
+        },
+        "refresh": "5s",
+        "schemaVersion": 27,
+        "version": 1,
+        "links": [
+            {
+                "title": "Digital English Academy",
+                "url": "/",
+                "type": "link"
+            },
+            {
+                "title": "Prometheus",
+                "url": ":9090",
+                "type": "link"
+            }
+        ]
+    }
+}

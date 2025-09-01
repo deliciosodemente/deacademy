@@ -1,0 +1,9 @@
+# Kubernetes namespace for Digital English Academy
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dea-production
+  labels:
+    name: dea-production
+    environment: production
+    app: digital-english-academy

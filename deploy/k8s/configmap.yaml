@@ -1,0 +1,78 @@
+# ConfigMap for Digital English Academy
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dea-config
+  namespace: dea-production
+data:
+  # Auth0 configuration
+  auth0-domain: "digitalenglishacademy.auth0.com"
+  auth0-audience: "https://api.digitalenglishacademy.com"
+
+  # Application configuration
+  app-name: "Digital English Academy"
+  app-version: "1.0.0"
+  environment: "production"
+
+  # Feature flags
+  enable-analytics: "true"
+  enable-monitoring: "true"
+  enable-error-tracking: "true"
+
+  # Performance settings
+  cache-ttl: "3600"
+  max-request-size: "10mb"
+
+  # Logging configuration
+  log-level: "info"
+  log-format: "json"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: dea-production
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name _;
+        root /usr/share/nginx/html;
+        index index.html;
+        
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        
+        # Health check
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+        
+        # Static assets with caching
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+            add_header Vary "Accept-Encoding";
+        }
+        
+        # SPA routing
+        location / {
+            try_files $uri $uri/ /index.html;
+            add_header Cache-Control "no-cache, no-store, must-revalidate";
+            add_header Pragma "no-cache";
+            add_header Expires "0";
+        }
+        
+        # Deny access to hidden files
+        location ~ /\. {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+    }
