@@ -43,9 +43,13 @@ export default defineConfig(({ mode }) => {
 
                 // External dependencies for server-side only
                 external: (id) => {
-                    // Only externalize server-side dependencies
+                    // Don't externalize HTML files or client-side dependencies
+                    if (id.endsWith('.html') || id.includes('index.html')) {
+                        return false;
+                    }
+                    // Only externalize server-side dependencies in Node.js environment
                     return ['mongodb', 'pg', 'fs', 'path', 'net', 'tls', 'dns', 'crypto', 'stream'].some(dep => id.includes(dep));
-                },
+                }
 
                 output: {
                     // Manual chunks for better caching
