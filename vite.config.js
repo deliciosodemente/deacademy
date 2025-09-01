@@ -49,7 +49,7 @@ export default defineConfig(({ mode }) => {
                     }
                     // Only externalize server-side dependencies in Node.js environment
                     return ['mongodb', 'pg', 'fs', 'path', 'net', 'tls', 'dns', 'crypto', 'stream'].some(dep => id.includes(dep));
-                }
+                },
 
                 output: {
                     // Manual chunks for better caching
