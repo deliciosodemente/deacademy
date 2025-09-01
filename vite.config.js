@@ -41,8 +41,11 @@ export default defineConfig(({ mode }) => {
                     main: path.resolve(__dirname, 'index.html')
                 },
 
-                // External dependencies (use CDN versions or exclude from browser build)
-                external: ['dayjs', 'dayjs/plugin/relativeTime', 'dayjs/locale/es', 'mongodb'],
+                // External dependencies for server-side only
+                external: (id) => {
+                    // Only externalize server-side dependencies
+                    return ['mongodb', 'pg', 'fs', 'path', 'net', 'tls', 'dns', 'crypto', 'stream'].some(dep => id.includes(dep));
+                },
 
                 output: {
                     // Manual chunks for better caching
@@ -129,32 +132,23 @@ export default defineConfig(({ mode }) => {
                 registerType: 'autoUpdate',
                 injectRegister: 'auto',
                 workbox: {
-                    globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg}'],
+                    globPatterns: ['**/*.{js,css,html}'],
+                    skipWaiting: true,
+                    clientsClaim: true
                 },
                 manifest: {
                     name: 'Digital English Academy',
                     short_name: 'DEA',
                     description: 'Plataforma integral de aprendizaje de inglés',
                     theme_color: '#ffffff',
-                    icons: [
-                        {
-                            src: 'pwa-192x192.png',
-                            sizes: '192x192',
-                            type: 'image/png',
-                        },
-                        {
-                            src: 'pwa-512x512.png',
-                            sizes: '512x512',
-                            type: 'image/png',
-                        },
-                        {
-                            src: 'pwa-512x512.png',
-                            sizes: '512x512',
-                            type: 'image/png',
-                            purpose: 'any maskable',
-                        },
-                    ],
+                    background_color: '#ffffff',
+                    display: 'standalone',
+                    start_url: '/',
+                    scope: '/'
                 },
+                devOptions: {
+                    enabled: false
+                }
             }),
         ],
 
