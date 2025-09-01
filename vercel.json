@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "fluentleap-academy",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
