@@ -1,0 +1,14 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="64" fill="#2563eb"/>
+  <g transform="translate(96, 96)">
+    <!-- Book icon -->
+    <path d="M32 156A20 20 0 0 1 52 136h112" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M52 16h112v160H52A20 20 0 0 1 32 156V36A20 20 0 0 1 52 16z" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- English text -->
+    <text x="180" y="220" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white">EN</text>
+    <!-- Academy text -->
+    <text x="96" y="280" font-family="Arial, sans-serif" font-size="42" fill="white">Academy</text>
+    <!-- Subtitle -->
+    <text x="120" y="310" font-family="Arial, sans-serif" font-size="24" fill="#e2e8f0">Digital English Learning</text>
+  </g>
+</svg>

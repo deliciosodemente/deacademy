@@ -1,0 +1,12 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" rx="24" fill="#2563eb"/>
+  <g transform="translate(32, 32)">
+    <!-- Book icon -->
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- English text -->
+    <text x="64" y="80" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white">EN</text>
+    <!-- Academy text -->
+    <text x="32" y="110" font-family="Arial, sans-serif" font-size="16" fill="white">Academy</text>
+  </g>
+</svg>
