@@ -287,6 +287,105 @@
             font-size: 1rem;
         }
 
+        /* 🍞 TOAST NOTIFICATIONS */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #667eea;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left-color: #e74c3c;
+        }
+
+        .toast.success {
+            border-left-color: #27ae60;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        .toast-message {
+            flex: 1;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            margin-left: 8px;
+        }
+
+        .toast-close:hover {
+            color: #333;
+        }
+
+        /* 🎯 FORM VALIDATION */
+        .form-group.error input {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        /* 🔄 IMPROVED LOADING */
+        .auth-btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .auth-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .auth-btn.primary.loading::after {
+            border-top-color: white;
+        }
+
         /* 📱 RESPONSIVE */
         @media (max-width: 480px) {
             .login-container {
@@ -377,20 +476,22 @@
 
         <!-- Email Form -->
         <form class="email-form" onsubmit="loginWithEmail(event)">
-            <div class="form-group">
+            <div class="form-group" id="email-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                <div class="error-message" id="email-error">Por favor, ingresa un email válido</div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="password-group">
                 <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" placeholder="Tu contraseña" required>
+                <input type="password" id="password" name="password" placeholder="Tu contraseña" required minlength="6">
+                <div class="error-message" id="password-error">La contraseña debe tener al menos 6 caracteres</div>
                 <div class="forgot-password">
                     <a href="#" onclick="forgotPassword()">¿Olvidaste tu contraseña?</a>
                 </div>
             </div>
 
-            <button type="submit" class="auth-btn primary">
+            <button type="submit" class="auth-btn primary" id="login-btn">
                 Iniciar Sesión
             </button>
         </form>
@@ -459,7 +560,8 @@
 
         // 🔐 LOGIN FUNCTIONS
         async function loginWithGoogle() {
-            showLoading(true);
+            const btn = document.querySelector('.auth-btn.google');
+            setButtonLoading(btn, true);
             try {
                 await auth0Client.loginWithRedirect({
                     authorizationParams: {
@@ -467,13 +569,14 @@
                     }
                 });
             } catch (error) {
-                showLoading(false);
-                showError('Error al iniciar sesión con Google');
+                setButtonLoading(btn, false);
+                showToast('Error al iniciar sesión con Google', 'error');
             }
         }
 
         async function loginWithFacebook() {
-            showLoading(true);
+            const btn = document.querySelector('.auth-btn.facebook');
+            setButtonLoading(btn, true);
             try {
                 await auth0Client.loginWithRedirect({
                     authorizationParams: {
@@ -481,13 +584,14 @@
                     }
                 });
             } catch (error) {
-                showLoading(false);
-                showError('Error al iniciar sesión con Facebook');
+                setButtonLoading(btn, false);
+                showToast('Error al iniciar sesión con Facebook', 'error');
             }
         }
 
         async function loginWithGitHub() {
-            showLoading(true);
+            const btn = document.querySelector('.auth-btn.github');
+            setButtonLoading(btn, true);
             try {
                 await auth0Client.loginWithRedirect({
                     authorizationParams: {
@@ -495,17 +599,24 @@
                     }
                 });
             } catch (error) {
-                showLoading(false);
-                showError('Error al iniciar sesión con GitHub');
+                setButtonLoading(btn, false);
+                showToast('Error al iniciar sesión con GitHub', 'error');
             }
         }
 
         async function loginWithEmail(event) {
             event.preventDefault();
-            showLoading(true);
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
 
+            const btn = document.getElementById('login-btn');
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+
+            setButtonLoading(btn, true);
 
             try {
                 await auth0Client.loginWithRedirect({
@@ -515,34 +626,113 @@
                     }
                 });
             } catch (error) {
-                showLoading(false);
-                showError('Error al iniciar sesión');
+                setButtonLoading(btn, false);
+                showToast('Error al iniciar sesión. Verifica tus credenciales.', 'error');
             }
         }
 
         function forgotPassword() {
             const email = document.getElementById('email').value;
-            if (email) {
-                // Redirect to Auth0 password reset
-                window.location.href = `https://${window.deaConfig?.auth0Domain}/login?screen_hint=forgot_password&email=${email}`;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email && emailRegex.test(email)) {
+                showToast('Redirigiendo a recuperación de contraseña...', 'info');
+                setTimeout(() => {
+                    window.location.href = `https://${window.deaConfig?.auth0Domain}/login?screen_hint=forgot_password&email=${email}`;
+                }, 1000);
             } else {
-                alert('Por favor, ingresa tu email primero');
+                showToast('Por favor, ingresa un email válido primero', 'error');
+                document.getElementById('email').focus();
             }
         }
 
         function showSignup() {
             try {
-                auth0Client.loginWithRedirect({
-                    authorizationParams: {
-                        screen_hint: 'signup'
-                    }
-                });
+                showToast('Redirigiendo a registro...', 'info');
+                setTimeout(() => {
+                    auth0Client.loginWithRedirect({
+                        authorizationParams: {
+                            screen_hint: 'signup'
+                        }
+                    });
+                }, 500);
             } catch (error) {
-                showError('Error al abrir registro');
+                showToast('Error al abrir registro', 'error');
             }
         }
 
         // 🎨 UI FUNCTIONS
+        function setButtonLoading(button, loading) {
+            if (loading) {
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <span class="toast-icon">${icon}</span>
+                    <span class="toast-message">${message}</span>
+                    <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            // Show toast with animation
+            setTimeout(() => toast.classList.add('show'), 100);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function validateForm() {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const emailGroup = document.getElementById('email-group');
+            const passwordGroup = document.getElementById('password-group');
+            
+            let isValid = true;
+
+            // Reset previous errors
+            emailGroup.classList.remove('error');
+            passwordGroup.classList.remove('error');
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailInput.value || !emailRegex.test(emailInput.value)) {
+                emailGroup.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate password
+            if (!passwordInput.value || passwordInput.value.length < 6) {
+                passwordGroup.classList.add('error');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
         function showLoading(show) {
             const loading = document.getElementById('loading');
             const form = document.querySelector('.email-form');
@@ -559,17 +749,61 @@
             }
         }
 
-        function showError(message) {
-            alert(message); // En producción, usar un toast más elegante
-        }
-
         // 🚀 INITIALIZE
-        document.addEventListener('DOMContentLoaded', initAuth0);
+        document.addEventListener('DOMContentLoaded', function() {
+            initAuth0();
+            setupFormValidation();
+        });
+
+        function setupFormValidation() {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const emailGroup = document.getElementById('email-group');
+            const passwordGroup = document.getElementById('password-group');
+
+            // Real-time email validation
+            emailInput.addEventListener('blur', function() {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (this.value && !emailRegex.test(this.value)) {
+                    emailGroup.classList.add('error');
+                } else {
+                    emailGroup.classList.remove('error');
+                }
+            });
+
+            emailInput.addEventListener('input', function() {
+                if (emailGroup.classList.contains('error')) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (emailRegex.test(this.value)) {
+                        emailGroup.classList.remove('error');
+                    }
+                }
+            });
+
+            // Real-time password validation
+            passwordInput.addEventListener('blur', function() {
+                if (this.value && this.value.length < 6) {
+                    passwordGroup.classList.add('error');
+                } else {
+                    passwordGroup.classList.remove('error');
+                }
+            });
+
+            passwordInput.addEventListener('input', function() {
+                if (passwordGroup.classList.contains('error')) {
+                    if (this.value.length >= 6) {
+                        passwordGroup.classList.remove('error');
+                    }
+                }
+            });
+        }
 
         // 🎨 ANIMATIONS
         document.querySelectorAll('.auth-btn').forEach(btn => {
             btn.addEventListener('mouseenter', function () {
-                this.style.transform = 'translateY(-2px)';
+                if (!this.disabled) {
+                    this.style.transform = 'translateY(-2px)';
+                }
             });
 
             btn.addEventListener('mouseleave', function () {

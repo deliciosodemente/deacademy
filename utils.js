@@ -85,16 +85,40 @@ export function setupAuthStateHeader() {
       setupUserDropdown();
 
       // Setup logout functionality
-      document.querySelector('#logoutBtn')?.addEventListener('click', async () => {
+      document.querySelector('#logoutBtn')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const logoutBtn = e.target.closest('#logoutBtn');
+        
         try {
+          // Disable button and show loading state
+          logoutBtn.disabled = true;
+          logoutBtn.innerHTML = `
+            <div class="spinner" style="width:16px;height:16px;border:2px solid #ccc;border-top:2px solid #333;border-radius:50%;animation:spin 1s linear infinite;"></div>
+            <span>Cerrando sesión...</span>
+          `;
+          
+          // Show toast notification
+          toast('Cerrando sesión...', 'info');
+          
           if (window.dea?.auth?.logout) {
             await window.dea.auth.logout();
           } else if (window.deaAuth?.manager) {
             await window.deaAuth.manager.logout();
           }
+          
+          // Success notification
+          toast('Sesión cerrada exitosamente', 'success');
+          
         } catch (error) {
           console.error('Logout failed:', error);
-          toast('Error al cerrar sesión');
+          toast('Error al cerrar sesión. Inténtalo de nuevo.', 'error');
+          
+          // Restore button state
+          logoutBtn.disabled = false;
+          logoutBtn.innerHTML = `
+            <i class="ph ph-sign-out"></i>
+            <span>Cerrar Sesión</span>
+          `;
         }
       });
 
@@ -113,7 +137,7 @@ export function setupAuthStateHeader() {
           }
         } catch (error) {
           console.error('Login failed:', error);
-          toast('Error al iniciar sesión');
+          toast('Error al iniciar sesión', 'error');
         }
       });
 
@@ -124,7 +148,7 @@ export function setupAuthStateHeader() {
           }
         } catch (error) {
           console.error('Signup failed:', error);
-          toast('Error al registrarse');
+          toast('Error al registrarse', 'error');
         }
       });
     }
@@ -245,6 +269,10 @@ function addHeaderStyles() {
       100% { transform: rotate(360deg); }
     }
     
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+    
     .user-menu-trigger {
       display: flex !important;
       align-items: center !important;
@@ -252,7 +280,7 @@ function addHeaderStyles() {
     }
     
     .user-dropdown {
-      animation: fadeInUp 0.2s ease;
+      animation: fadeInUp 0.2s ease-out;
     }
     
     @keyframes fadeInUp {
@@ -280,12 +308,40 @@ function addHeaderStyles() {
   document.head.appendChild(styles);
 }
 
-export function toast(text, ms = 4000) {
+export function toast(text, type = 'info', ms = 4000) {
   const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:rgba(17,19,23,.9);color:#fff;padding:.6rem .8rem;border-radius:12px;z-index:70;max-width:min(92vw,680px)';
+  
+  // Define colors for different toast types
+  const colors = {
+    success: 'background:rgba(34,197,94,.9);color:#fff;',
+    error: 'background:rgba(239,68,68,.9);color:#fff;',
+    info: 'background:rgba(59,130,246,.9);color:#fff;',
+    warning: 'background:rgba(245,158,11,.9);color:#fff;'
+  };
+  
+  const baseStyle = 'position:fixed;left:50%;bottom:20px;transform:translateX(-50%);padding:.6rem .8rem;border-radius:12px;z-index:70;max-width:min(92vw,680px);font-weight:500;box-shadow:0 10px 25px rgba(0,0,0,0.1);';
+  const typeStyle = colors[type] || colors.info;
+  
+  t.style.cssText = baseStyle + typeStyle;
   t.textContent = text;
   document.body.appendChild(t);
-  setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, ms);
+  
+  // Add entrance animation
+  t.style.opacity = '0';
+  t.style.transform = 'translateX(-50%) translateY(20px)';
+  t.style.transition = 'all 0.3s ease-out';
+  
+  requestAnimationFrame(() => {
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  
+  setTimeout(() => {
+    t.style.transition = 'all 0.3s ease-in';
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(-20px)';
+    setTimeout(() => t.remove(), 300);
+  }, ms);
 }
 
 // small a11y helpers injection

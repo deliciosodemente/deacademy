@@ -134,6 +134,26 @@ export async function initAuth() {
 function handleAuthStateChange(authState, systems) {
   const { errorBoundary, accessibilityManager, performanceMonitor } = systems;
 
+  // Store authentication state in session storage for route protection
+  try {
+    if (authState.isAuthenticated) {
+      sessionStorage.setItem('dea_auth_state', 'authenticated');
+      if (authState.user) {
+        sessionStorage.setItem('dea_user_info', JSON.stringify({
+          id: authState.user.sub,
+          email: authState.user.email,
+          name: authState.user.name,
+          timestamp: Date.now()
+        }));
+      }
+    } else {
+      sessionStorage.removeItem('dea_auth_state');
+      sessionStorage.removeItem('dea_user_info');
+    }
+  } catch (error) {
+    console.warn('Failed to update session storage:', error);
+  }
+
   // Announce authentication state changes to screen readers
   if (accessibilityManager) {
     if (authState.isAuthenticated && authState.user) {
@@ -439,6 +459,15 @@ export async function login(options = {}) {
 
 export async function logout() {
   try {
+    // Clear session storage immediately
+    try {
+      sessionStorage.removeItem('dea_auth_state');
+      sessionStorage.removeItem('dea_user_info');
+      sessionStorage.removeItem('dea_intended_route');
+    } catch (storageError) {
+      console.warn('Failed to clear session storage:', storageError);
+    }
+
     // Use enhanced Auth0Manager if available
     if (window.deaAuth?.manager) {
       console.log('🚪 Using enhanced Auth0Manager for logout...');

@@ -68,6 +68,12 @@ class EnhancedRouter {
         requiresAuth: true,
         requiredRoles: ['moderator', 'admin'],
         preload: ['moderator-assets']
+      },
+      '/logout': {
+        renderer: async () => await this.renderLogout(),
+        title: 'Cerrando Sesión - Digital English Academy',
+        requiresAuth: false,
+        skipLayout: true
       }
     };
 
@@ -462,6 +468,31 @@ class EnhancedRouter {
       return true; // Allow navigation
     });
 
+    // Session validation guard
+    this.addRouteGuard(async (to, from) => {
+      const route = this.routes[to];
+
+      if (route?.requiresAuth) {
+        try {
+          // Check if Auth0 token is expired
+          if (window.deaAuth?.client) {
+            const token = await window.deaAuth.client.getTokenSilently().catch(() => null);
+            if (!token) {
+              console.log('🔒 Token expired or invalid, redirecting to login');
+              sessionStorage.setItem('dea_intended_route', to);
+              await window.deaAuth.manager.loginWithRedirect();
+              return false;
+            }
+          }
+        } catch (error) {
+          console.warn('⚠️ Session validation failed:', error);
+          // Continue with normal auth check
+        }
+      }
+
+      return true;
+    });
+
     // Performance guard - preload route assets
     this.addRouteGuard(async (to, from) => {
       const route = this.routes[to];
@@ -493,11 +524,30 @@ class EnhancedRouter {
     try {
       // Check Auth0 authentication
       if (window.deaAuth?.client) {
-        return await window.deaAuth.client.isAuthenticated();
+        const isAuthenticated = await window.deaAuth.client.isAuthenticated();
+        
+        if (isAuthenticated) {
+          // Double-check with token validation
+          try {
+            const token = await window.deaAuth.client.getTokenSilently();
+            return !!token;
+          } catch (tokenError) {
+            console.warn('Token validation failed:', tokenError);
+            return false;
+          }
+        }
+        
+        return false;
       }
 
-      // Fallback: check for user object
-      return !!window.deaAuth?.user;
+      // Fallback: check for user object and session storage
+      if (window.deaAuth?.user) {
+        return true;
+      }
+
+      // Check session storage for auth state
+      const authState = sessionStorage.getItem('dea_auth_state');
+      return authState === 'authenticated';
 
     } catch (error) {
       console.error('Authentication check failed:', error);
@@ -759,7 +809,8 @@ class EnhancedRouter {
         }
 
         // Render new content
-        view.innerHTML = renderer();
+        const content = await renderer();
+        view.innerHTML = content;
 
         // Enhance interactions
         enhance();
@@ -863,6 +914,27 @@ class EnhancedRouter {
         </div>
       `;
     }
+  }
+
+  /**
+   * Render logout page
+   */
+  renderLogout() {
+    // Load the logout.html content
+    return fetch('./views/logout.html')
+      .then(response => response.text())
+      .catch(() => {
+        // Fallback if logout.html is not found
+        return `
+          <div class="logout-container">
+            <div class="logout-content">
+              <div class="logout-spinner"></div>
+              <h2>Cerrando Sesión...</h2>
+              <p>Por favor espera mientras procesamos tu solicitud.</p>
+            </div>
+          </div>
+        `;
+      });
   }
 
   /**
