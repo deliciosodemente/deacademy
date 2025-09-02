@@ -109,6 +109,10 @@
     <link rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" />
   </noscript>
+  <link rel="preload" href="./css/chat-interface.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet" href="./css/chat-interface.css" />
+  </noscript>
 
   <!-- Preload Critical Scripts -->
   <link rel="preload" href="./app.js" as="script" />
@@ -311,6 +315,15 @@
       </div>
     </div>
   </main>
+
+  <!-- Chat Interface Section -->
+  <section class="chat-section" id="chat-section" aria-label="Asistente de chat para aprendizaje de inglés">
+    <div class="container">
+      <div id="chat-container" role="region" aria-label="Interfaz de chat con asistente AI">
+        <!-- Chat interface will be initialized here -->
+      </div>
+    </div>
+  </section>
 
   <!-- ARIA Live Regions for Screen Reader Announcements -->
   <div id="aria-live-polite" aria-live="polite" aria-atomic="true" class="sr-only"></div>

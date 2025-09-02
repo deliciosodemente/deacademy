@@ -6,6 +6,7 @@ import { dataManager, seedDatabase, syncFromDB, generateCourseImages, forceResiz
 import { mountMiniChat } from './mini-chat.js';
 import { prepareForProduction } from './build.js';
 import { login, logout, getUser } from './auth.js';
+import { ChatInterface } from './components/chat-interface.js';
 
 // Handle route changes
 window.addEventListener('hashchange', navigate);
@@ -26,6 +27,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Initialize additional features
     initOnboarding();
     mountMiniChat();
+    
+    // Initialize chat interface
+    const chatInterface = new ChatInterface('chat-container');
+    window.dea = window.dea || {};
+    window.dea.chatInterface = chatInterface;
 
     // Wire up authentication buttons after Auth0 is initialized
     setTimeout(() => {

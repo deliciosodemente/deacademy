@@ -196,3 +196,31 @@ body{
   .hero .bg-video{display:none}
   .hero::after{background:#f6f8ff}
 }
+
+/* Chat Section Styles */
+.chat-section {
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-top: 1px solid var(--border);
+}
+
+.chat-section .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#chat-container {
+  width: 100%;
+  max-width: 700px;
+}
+
+@media (max-width: 768px) {
+  .chat-section {
+    padding: 2rem 0;
+  }
+  
+  .chat-section .container {
+    padding: 0 1rem;
+  }
+}
