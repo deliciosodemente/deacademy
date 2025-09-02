@@ -471,17 +471,18 @@ export class SubscriptionSelector {
         if (window.deaAuth?.manager) {
             const user = await window.deaAuth.manager.getUserProfile();
             if (user) {
-                // Update subscription in database
-                const { mongoManager } = await import('../lib/mongodb-manager.js');
-                if (mongoManager && mongoManager.isConnected) {
-                    await mongoManager.updateDocument('users',
-                        { auth0Id: user.auth0Id },
-                        {
-                            'subscription.plan': 'free',
-                            'subscription.status': 'active',
-                            'subscription.startDate': new Date()
-                        }
-                    );
+                // Update subscription in local storage (fallback for missing MongoDB)
+                try {
+                    const subscriptionData = {
+                        plan: 'free',
+                        status: 'active',
+                        startDate: new Date().toISOString(),
+                        auth0Id: user.auth0Id
+                    };
+                    localStorage.setItem('user_subscription', JSON.stringify(subscriptionData));
+                    console.log('Subscription updated in local storage:', subscriptionData);
+                } catch (error) {
+                    console.error('Error updating subscription:', error);
                 }
             }
         }
