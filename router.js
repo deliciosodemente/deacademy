@@ -6,6 +6,10 @@ import { renderLesson } from './views/lesson.js';
 import { renderCommunity } from './views/community.js';
 import { renderProfile } from './views/profile.js';
 import { renderNotFound } from './views/notfound.js';
+import { renderPrivacy } from './views/privacy.js';
+import { renderTerms } from './views/terms.js';
+import { renderContact } from './views/contact.js';
+import { renderHelp } from './views/help.js';
 
 // Enhanced Router with integrated systems
 class EnhancedRouter {
@@ -47,6 +51,26 @@ class EnhancedRouter {
         title: 'Perfil - Digital English Academy',
         requiresAuth: true,
         preload: ['profile-assets']
+      },
+      '/privacy': {
+        renderer: renderPrivacy,
+        title: 'Privacidad - FluentLeap',
+        requiresAuth: false
+      },
+      '/terms': {
+        renderer: renderTerms,
+        title: 'Términos y Condiciones - FluentLeap',
+        requiresAuth: false
+      },
+      '/contact': {
+        renderer: renderContact,
+        title: 'Contacto - FluentLeap',
+        requiresAuth: false
+      },
+      '/help': {
+        renderer: renderHelp,
+        title: 'Ayuda - FluentLeap',
+        requiresAuth: false
       },
       '/admin': {
         renderer: () => import('./views/admin.js').then(m => m.renderAdmin()),
