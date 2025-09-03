@@ -257,7 +257,7 @@ function updateUserProfileDisplay(user) {
   }
 
   const userName = user.name || user.email || 'Usuario';
-  const userAvatar = user.picture || '/default-avatar.png';
+  const userAvatar = user.picture || '/default-avatar.svg';
 
   userProfile.innerHTML = `
     <div class="user-avatar">

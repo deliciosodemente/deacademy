@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="200" height="60" rx="8" fill="url(#logoGradient)"/>
+  
+  <!-- Text -->
+  <text x="100" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">
+    Digital English
+  </text>
+  <text x="100" y="40" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    Academy
+  </text>
+  
+  <!-- Icon -->
+  <circle cx="25" cy="30" r="8" fill="white" opacity="0.2"/>
+  <path d="M21 26 L25 30 L29 26" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

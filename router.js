@@ -649,7 +649,7 @@ class EnhancedRouter {
   async preloadHomeAssets() {
     // Preload home-specific resources
     const assets = [
-      '/hero-image.jpg',
+      '/hero-image.svg',
       '/home-features.js'
     ];
 
@@ -661,7 +661,7 @@ class EnhancedRouter {
    */
   async preloadCourseAssets() {
     const assets = [
-      '/course-thumbnails.jpg',
+      '/course-thumbnails.svg',
       '/course-data.json'
     ];
 

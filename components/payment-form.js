@@ -135,7 +135,7 @@ export class PaymentForm {
 
                     <div class="payment-security">
                         <div class="security-badges">
-                            <img src="/images/stripe-badge.png" alt="Powered by Stripe" class="stripe-badge">
+                            <img src="/images/stripe-badge.svg" alt="Powered by Stripe" class="stripe-badge">
                             <div class="security-text">
                                 <i class="ph ph-lock" aria-hidden="true"></i>
                                 <span>Pago seguro y encriptado</span>
