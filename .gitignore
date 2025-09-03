@@ -98,3 +98,4 @@ Security/
 
 # Specific project files to ignore
 app-package.tar.gz
+.env*.local

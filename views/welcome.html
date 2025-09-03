@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Digital English Academy</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .welcome-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .welcome-message {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .edge-config-demo {
+            background: white;
+            color: #333;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .demo-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #0a66ff;
+        }
+        
+        .demo-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #0a66ff;
+        }
+        
+        .demo-result {
+            background: #e9ecef;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            margin-top: 0.5rem;
+        }
+        
+        .loading {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #dc3545;
+        }
+        
+        .success {
+            color: #28a745;
+        }
+        
+        .btn {
+            background: #0a66ff;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #0056d3;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <div class="welcome-message" id="welcomeMessage">
+                Cargando mensaje de bienvenida...
+            </div>
+            <p>Demostración de Vercel Edge Config</p>
+        </div>
+        
+        <div class="edge-config-demo">
+            <h2>🚀 Vercel Edge Config Demo</h2>
+            <p>Esta página demuestra cómo usar Vercel Edge Config para obtener configuraciones dinámicas.</p>
+            
+            <div class="demo-section">
+                <div class="demo-title">📝 Mensaje de Saludo</div>
+                <button class="btn" onclick="loadGreeting()">Cargar Saludo</button>
+                <div class="demo-result" id="greetingResult">Haz clic en el botón para cargar el saludo desde Edge Config</div>
+            </div>
+            
+            <div class="demo-section">
+                <div class="demo-title">🎛️ Feature Flags</div>
+                <button class="btn" onclick="loadFeatureFlags()">Cargar Feature Flags</button>
+                <div class="demo-result" id="featureFlagsResult">Haz clic en el botón para cargar los feature flags desde Edge Config</div>
+            </div>
+            
+            <div class="demo-section">
+                <div class="demo-title">🧪 Configuración A/B Testing</div>
+                <button class="btn" onclick="loadABTestConfig()">Cargar Config A/B</button>
+                <div class="demo-result" id="abTestResult">Haz clic en el botón para cargar la configuración de A/B testing desde Edge Config</div>
+            </div>
+            
+            <div class="demo-section">
+                <div class="demo-title">🔄 Limpiar Cache</div>
+                <button class="btn" onclick="clearCache()">Limpiar Cache</button>
+                <div class="demo-result" id="cacheResult">El cache se limpiará y las próximas consultas obtendrán datos frescos</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="../index.html" class="btn">← Volver al Inicio</a>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Wait for the app to initialize
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Load initial greeting
+            await loadGreeting();
+        });
+        
+        window.loadGreeting = async function() {
+            const resultEl = document.getElementById('greetingResult');
+            const messageEl = document.getElementById('welcomeMessage');
+            
+            try {
+                resultEl.textContent = 'Cargando...';
+                resultEl.className = 'demo-result loading';
+                
+                if (window.dea && window.dea.getGreeting) {
+                    const greeting = await window.dea.getGreeting();
+                    resultEl.textContent = JSON.stringify({ greeting }, null, 2);
+                    resultEl.className = 'demo-result success';
+                    messageEl.textContent = greeting;
+                } else {
+                    // Fallback if dea is not available yet
+                    setTimeout(loadGreeting, 1000);
+                    resultEl.textContent = 'Esperando inicialización de la aplicación...';
+                    resultEl.className = 'demo-result loading';
+                }
+            } catch (error) {
+                resultEl.textContent = `Error: ${error.message}`;
+                resultEl.className = 'demo-result error';
+                messageEl.textContent = 'Welcome to Digital English Academy!';
+            }
+        };
+        
+        window.loadFeatureFlags = async function() {
+            const resultEl = document.getElementById('featureFlagsResult');
+            
+            try {
+                resultEl.textContent = 'Cargando...';
+                resultEl.className = 'demo-result loading';
+                
+                if (window.dea && window.dea.getFeatureFlags) {
+                    const flags = await window.dea.getFeatureFlags();
+                    resultEl.textContent = JSON.stringify(flags, null, 2);
+                    resultEl.className = 'demo-result success';
+                } else {
+                    resultEl.textContent = 'Edge Config no disponible';
+                    resultEl.className = 'demo-result error';
+                }
+            } catch (error) {
+                resultEl.textContent = `Error: ${error.message}`;
+                resultEl.className = 'demo-result error';
+            }
+        };
+        
+        window.loadABTestConfig = async function() {
+            const resultEl = document.getElementById('abTestResult');
+            
+            try {
+                resultEl.textContent = 'Cargando...';
+                resultEl.className = 'demo-result loading';
+                
+                if (window.dea && window.dea.getABTestConfig) {
+                    const config = await window.dea.getABTestConfig();
+                    resultEl.textContent = JSON.stringify(config, null, 2);
+                    resultEl.className = 'demo-result success';
+                } else {
+                    resultEl.textContent = 'Edge Config no disponible';
+                    resultEl.className = 'demo-result error';
+                }
+            } catch (error) {
+                resultEl.textContent = `Error: ${error.message}`;
+                resultEl.className = 'demo-result error';
+            }
+        };
+        
+        window.clearCache = function() {
+            const resultEl = document.getElementById('cacheResult');
+            
+            try {
+                if (window.dea && window.dea.edgeConfig) {
+                    window.dea.edgeConfig.clearCache();
+                    resultEl.textContent = '✅ Cache limpiado exitosamente. Las próximas consultas obtendrán datos frescos.';
+                    resultEl.className = 'demo-result success';
+                } else {
+                    resultEl.textContent = 'Edge Config no disponible';
+                    resultEl.className = 'demo-result error';
+                }
+            } catch (error) {
+                resultEl.textContent = `Error: ${error.message}`;
+                resultEl.className = 'demo-result error';
+            }
+        };
+    </script>
+</body>
+</html>

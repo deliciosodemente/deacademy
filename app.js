@@ -7,6 +7,7 @@ import { mountMiniChat } from './mini-chat.js';
 import { prepareForProduction } from './build.js';
 import { login, logout, getUser } from './auth.js';
 import { ChatInterface } from './components/chat-interface.js';
+import { edgeConfig, getGreeting, getFeatureFlags, getABTestConfig } from './middleware.js';
 
 // Handle route changes
 window.addEventListener('hashchange', navigate);
@@ -62,6 +63,16 @@ window.addEventListener('DOMContentLoaded', async () => {
       // New enhanced API
       config: configManager,
       bootstrap: appBootstrap,
+
+      // Vercel Edge Config integration
+      edgeConfig,
+      getGreeting,
+      getFeatureFlags: async () => {
+        const edgeFlags = await getFeatureFlags();
+        // Merge with local config flags
+        return { ...configManager.getFeatureFlags(), ...edgeFlags };
+      },
+      getABTestConfig,
 
       // Utility methods
       restart: () => location.reload(),

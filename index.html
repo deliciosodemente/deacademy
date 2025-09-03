@@ -180,6 +180,19 @@
   <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js" defer></script>
   <!-- Stripe.js (for future card elements; payment links use window.open) -->
   <script src="https://js.stripe.com/v3/" defer></script>
+  
+  <!-- Vercel Analytics -->
+  <script type="module">
+    import { inject } from '@vercel/analytics';
+    inject();
+  </script>
+  
+  <!-- Vercel Speed Insights -->
+  <script type="module">
+    import { injectSpeedInsights } from '@vercel/speed-insights';
+    injectSpeedInsights();
+  </script>
+  
   <script>
     // Configuration placeholders – replace in WordPress or via script tag before app.js
     window.deaConfig = {

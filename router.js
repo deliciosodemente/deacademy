@@ -814,7 +814,47 @@ class EnhancedRouter {
       // Run middleware
       await this.runRouteMiddleware(hash, this.previousRoute);
 
-      // Get route configuration
+      // Check for static HTML routes first
+      const staticRoutes = {
+        '/welcome': {
+          file: './views/welcome.html',
+          title: 'Welcome - Digital English Academy'
+        },
+        '/system-logs': {
+          file: './views/system-logs.html',
+          title: 'System Logs - Digital English Academy'
+        },
+        '/logs': {
+          file: './views/logs.html',
+          title: 'Application Logs - Digital English Academy'
+        },
+        '/technical-logs': {
+          file: './views/technical-logs.html',
+          title: 'Technical Logs - Digital English Academy'
+        }
+      };
+
+      const staticRoute = staticRoutes[hash];
+      
+      if (staticRoute) {
+        // Handle static HTML routes
+        document.title = staticRoute.title;
+        
+        try {
+          const response = await fetch(staticRoute.file);
+          if (response.ok) {
+            const htmlContent = await response.text();
+            // Replace the entire document content for static routes
+            document.documentElement.innerHTML = htmlContent;
+            return;
+          }
+        } catch (error) {
+          console.warn(`Failed to load static route ${hash}:`, error);
+          // Fall through to normal route handling
+        }
+      }
+
+      // Get route configuration for dynamic routes
       const routeConfig = this.routes[hash];
       const renderer = routeConfig?.renderer || renderNotFound;
 
