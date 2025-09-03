@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs del Sistema - FluentLeap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+        }
+        
+        .nav-tab:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .log-entry {
+            background: #f8fafc;
+            border-left: 4px solid #e2e8f0;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .log-entry.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        
+        .log-entry.warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+        
+        .log-entry.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .log-entry.info {
+            border-left-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .log-timestamp {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        
+        .log-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+        
+        .log-message {
+            color: #475569;
+            line-height: 1.6;
+        }
+        
+        .log-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-resolved {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-error {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #2563eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="history.back()">← Volver</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>📊 Logs del Sistema</h1>
+            <p>Registro de eventos, errores y soluciones implementadas</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('errors')">🚨 Errores</button>
+            <button class="nav-tab" onclick="showTab('fixes')">🔧 Soluciones</button>
+            <button class="nav-tab" onclick="showTab('server')">🖥️ Servidor</button>
+            <button class="nav-tab" onclick="showTab('browser')">🌐 Navegador</button>
+        </div>
+        
+        <div id="errors" class="tab-content active">
+            <div class="log-entry error">
+                <div class="log-timestamp">2024-01-24 09:52:00</div>
+                <div class="log-title">❌ Error de Inicialización Auth0 <span class="status-badge status-resolved">Resuelto</span></div>
+                <div class="log-message">
+                    Auth0 SDK falló al cargar dentro del tiempo límite. Este error se debe a la configuración de timeout en el bootstrap de la aplicación.
+                </div>
+                <div class="log-code">Error: Auth0 SDK failed to load within timeout
+at initializeAuth (http://localhost:3000/lib/app-bootstrap.js:506:20)</div>
+            </div>
+            
+            <div class="log-entry error">
+                <div class="log-timestamp">2024-01-24 09:52:00</div>
+                <div class="log-title">❌ Error de Dependencias de Base de Datos <span class="status-badge status-resolved">Resuelto</span></div>
+                <div class="log-message">
+                    La inicialización de la base de datos falló debido a dependencias faltantes de Auth0.
+                </div>
+                <div class="log-code">Error: Missing dependencies for database: auth
+at initializeModule (http://localhost:3000/lib/app-bootstrap.js:195:20)</div>
+            </div>
+            
+            <div class="log-entry error">
+                <div class="log-timestamp">2024-01-24 09:52:00</div>
+                <div class="log-title">❌ Error de Dependencias de Pagos <span class="status-badge status-resolved">Resuelto</span></div>
+                <div class="log-message">
+                    El sistema de pagos no pudo inicializarse debido a dependencias faltantes de Auth0.
+                </div>
+                <div class="log-code">Error: Missing dependencies for payments: auth
+at initializeModule (http://localhost:3000/lib/app-bootstrap.js:195:20)</div>
+            </div>
+            
+            <div class="log-entry warning">
+                <div class="log-timestamp">2024-01-24 09:51:00</div>
+                <div class="log-title">⚠️ NODE_ENV Incorrecto <span class="status-badge status-resolved">Resuelto</span></div>
+                <div class="log-message">
+                    NODE_ENV estaba configurado como 'production' en el archivo .env, causando problemas en el entorno de desarrollo.
+                </div>
+                <div class="log-code">NODE_ENV=production is not supported in the .env file. Only NODE_ENV=development is supported to create a development build</div>
+            </div>
+        </div>
+        
+        <div id="fixes" class="tab-content">
+            <div class="log-entry success">
+                <div class="log-timestamp">2024-01-24 09:53:00</div>
+                <div class="log-title">✅ Corrección NODE_ENV</div>
+                <div class="log-message">
+                    Cambiado NODE_ENV de 'production' a 'development' en el archivo .env para el entorno de desarrollo local.
+                </div>
+                <div class="log-code"># Environment
+NODE_ENV=development</div>
+            </div>
+            
+            <div class="log-entry success">
+                <div class="log-timestamp">2024-01-24 09:54:00</div>
+                <div class="log-title">✅ Archivo home-features.js Creado</div>
+                <div class="log-message">
+                    Creado el archivo home-features.js que estaba causando errores 404. Incluye funcionalidades para animaciones, interacciones y lazy loading.
+                </div>
+                <div class="log-code">// Funcionalidades implementadas:
+- setupEntryAnimations()
+- setupFeatureInteractions()
+- setupLazyLoading()</div>
+            </div>
+            
+            <div class="log-entry success">
+                <div class="log-timestamp">2024-01-24 09:55:00</div>
+                <div class="log-title">✅ Orden de Scripts Corregido</div>
+                <div class="log-message">
+                    Movido el script de módulo principal después del importmap en el head para resolver advertencias de Vite.
+                </div>
+                <div class="log-code"><!-- Import Map for ESM libraries -->
+<script type="importmap">{...}</script>
+<!-- Main Application Script (moved here to be after importmap) -->
+<script type="module" src="./app.js"></script></div>
+            </div>
+        </div>
+        
+        <div id="server" class="tab-content">
+            <div class="log-entry info">
+                <div class="log-timestamp">2024-01-24 09:46:57</div>
+                <div class="log-title">🚀 Servidor Iniciado</div>
+                <div class="log-message">
+                    Servidor de desarrollo Vite iniciado correctamente en múltiples interfaces de red.
+                </div>
+                <div class="log-code">VITE v7.1.3  ready in 862 ms
+
+➜  Local:   http://localhost:3000/
+➜  Network: http://192.168.0.25:3000/
+➜  Network: http://172.18.160.1:3000/
+➜  Network: http://172.17.80.1:3000/</div>
+            </div>
+            
+            <div class="log-entry info">
+                <div class="log-timestamp">2024-01-24 09:51:17</div>
+                <div class="log-title">🔄 Servidor Reiniciado</div>
+                <div class="log-message">
+                    El servidor se reinició automáticamente después de los cambios en los archivos de configuración.
+                </div>
+                <div class="log-code">[vite] server restarted.</div>
+            </div>
+            
+            <div class="log-entry info">
+                <div class="log-timestamp">2024-01-24 09:52:23</div>
+                <div class="log-title">🔄 Recarga de Página</div>
+                <div class="log-message">
+                    La página se recargó automáticamente después de las correcciones implementadas.
+                </div>
+                <div class="log-code">[vite] (client) page reload index.html</div>
+            </div>
+        </div>
+        
+        <div id="browser" class="tab-content">
+            <div class="log-entry error">
+                <div class="log-timestamp">2024-01-24 09:52:00</div>
+                <div class="log-title">🌐 Errores de Inicialización en Navegador</div>
+                <div class="log-message">
+                    Múltiples errores de inicialización detectados en el navegador relacionados con Auth0, base de datos y sistema de pagos.
+                </div>
+                <div class="log-code">❌ Auth0 initialization failed: Error: Auth0 SDK failed to load within timeout
+❌ Failed to initialize auth: Error: Auth0 SDK failed to load within timeout
+❌ Failed to initialize database: Error: Missing dependencies for database: auth
+❌ Failed to initialize payments: Error: Missing dependencies for payments: auth</div>
+            </div>
+            
+            <div class="log-entry warning">
+                <div class="log-timestamp">2024-01-24 09:51:00</div>
+                <div class="log-title">⚠️ Advertencias de Importmap</div>
+                <div class="log-message">
+                    Advertencias sobre el orden de scripts importmap que fueron corregidas moviendo el script principal.
+                </div>
+                <div class="log-code">(!) <script type="importmap"> should come before <script type="module"> and <link rel="modulepreload">
+(!) <script type="importmap"> should come before <script type="module"> and <link rel="modulepreload"> in /index.html</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            // Ocultar todas las pestañas
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remover clase active de todos los botones
+            const buttons = document.querySelectorAll('.nav-tab');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Mostrar la pestaña seleccionada
+            document.getElementById(tabName).classList.add('active');
+            
+            // Activar el botón correspondiente
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

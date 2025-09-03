@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Activity Logs - FluentLeap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 40px;
+            background: #f8fafc;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6c5ce7, #a29bfe);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .activity-section {
+            padding: 40px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 12px;
+        }
+        
+        .filter-tab {
+            background: transparent;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-tab.active {
+            background: white;
+            color: #6c5ce7;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .activity-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #6c5ce7, #a29bfe);
+        }
+        
+        .activity-item {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #6c5ce7;
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .activity-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .user-info h4 {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .user-info p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .activity-time {
+            color: #a0aec0;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .activity-description {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .activity-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .activity-tag {
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .activity-tag.lesson { background: #e6fffa; color: #319795; }
+        .activity-tag.payment { background: #fef5e7; color: #d69e2e; }
+        .activity-tag.chat { background: #e6f3ff; color: #3182ce; }
+        .activity-tag.video { background: #f0fff4; color: #38a169; }
+        .activity-tag.auth { background: #fed7d7; color: #c53030; }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e2e8f0;
+            color: #4a5568;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+        
+        .empty-state p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="history.back()">← Volver</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>👥 User Activity Logs</h1>
+            <p>Seguimiento detallado de la actividad y comportamiento de usuarios</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👤</div>
+                <div class="stat-number">0</div>
+                <div class="stat-label">Usuarios Activos</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-number">0</div>
+                <div class="stat-label">Lecciones Completadas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💬</div>
+                <div class="stat-number">0</div>
+                <div class="stat-label">Conversaciones IA</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎥</div>
+                <div class="stat-number">0</div>
+                <div class="stat-label">Videos Reproducidos</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💳</div>
+                <div class="stat-number">0</div>
+                <div class="stat-label">Transacciones</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-number">0h</div>
+                <div class="stat-label">Tiempo de Estudio</div>
+            </div>
+        </div>
+        
+        <div class="activity-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>📊</span> Actividad Reciente
+                </div>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterActivity('all')">Todas</button>
+                    <button class="filter-tab" onclick="filterActivity('auth')">Autenticación</button>
+                    <button class="filter-tab" onclick="filterActivity('lesson')">Lecciones</button>
+                    <button class="filter-tab" onclick="filterActivity('payment')">Pagos</button>
+                    <button class="filter-tab" onclick="filterActivity('chat')">Chat IA</button>
+                </div>
+            </div>
+            
+            <div class="activity-timeline">
+                <!-- Estado vacío cuando no hay usuarios autenticados -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔐</div>
+                    <h3>Sistema de Autenticación No Disponible</h3>
+                    <p>Actualmente no hay usuarios autenticados debido a problemas con Auth0.<br>
+                    Una vez resueltos los problemas de autenticación, aquí aparecerán las actividades de los usuarios.</p>
+                </div>
+                
+                <!-- Ejemplos de actividades que aparecerían con usuarios autenticados -->
+                <div class="activity-item" data-type="auth" style="display: none;">
+                    <div class="activity-header">
+                        <div class="activity-user">
+                            <div class="user-avatar">JD</div>
+                            <div class="user-info">
+                                <h4>Juan Pérez</h4>
+                                <p>juan.perez@email.com</p>
+                            </div>
+                        </div>
+                        <div class="activity-time">Hace 2 horas</div>
+                    </div>
+                    <div class="activity-description">
+                        Usuario inició sesión exitosamente desde Madrid, España
+                    </div>
+                    <div class="activity-tags">
+                        <span class="activity-tag auth">Autenticación</span>
+                        <span class="activity-tag">Login</span>
+                    </div>
+                </div>
+                
+                <div class="activity-item" data-type="lesson" style="display: none;">
+                    <div class="activity-header">
+                        <div class="activity-user">
+                            <div class="user-avatar">MG</div>
+                            <div class="user-info">
+                                <h4>María García</h4>
+                                <p>maria.garcia@email.com</p>
+                            </div>
+                        </div>
+                        <div class="activity-time">Hace 3 horas</div>
+                    </div>
+                    <div class="activity-description">
+                        Completó la lección "Present Perfect Tense" con una puntuación del 95%
+                    </div>
+                    <div class="activity-tags">
+                        <span class="activity-tag lesson">Lección</span>
+                        <span class="activity-tag">Gramática</span>
+                        <span class="activity-tag">Completada</span>
+                    </div>
+                </div>
+                
+                <div class="activity-item" data-type="chat" style="display: none;">
+                    <div class="activity-header">
+                        <div class="activity-user">
+                            <div class="user-avatar">AL</div>
+                            <div class="user-info">
+                                <h4>Ana López</h4>
+                                <p>ana.lopez@email.com</p>
+                            </div>
+                        </div>
+                        <div class="activity-time">Hace 5 horas</div>
+                    </div>
+                    <div class="activity-description">
+                        Inició una conversación con el asistente de IA sobre pronunciación en inglés
+                    </div>
+                    <div class="activity-tags">
+                        <span class="activity-tag chat">Chat IA</span>
+                        <span class="activity-tag">Pronunciación</span>
+                    </div>
+                </div>
+                
+                <div class="activity-item" data-type="payment" style="display: none;">
+                    <div class="activity-header">
+                        <div class="activity-user">
+                            <div class="user-avatar">CR</div>
+                            <div class="user-info">
+                                <h4>Carlos Rodríguez</h4>
+                                <p>carlos.rodriguez@email.com</p>
+                            </div>
+                        </div>
+                        <div class="activity-time">Hace 1 día</div>
+                    </div>
+                    <div class="activity-description">
+                        Realizó pago exitoso por suscripción Premium - $29.99 USD
+                    </div>
+                    <div class="activity-tags">
+                        <span class="activity-tag payment">Pago</span>
+                        <span class="activity-tag">Premium</span>
+                        <span class="activity-tag">Stripe</span>
+                    </div>
+                </div>
+                
+                <div class="activity-item" data-type="video" style="display: none;">
+                    <div class="activity-header">
+                        <div class="activity-user">
+                            <div class="user-avatar">LM</div>
+                            <div class="user-info">
+                                <h4>Luis Martínez</h4>
+                                <p>luis.martinez@email.com</p>
+                            </div>
+                        </div>
+                        <div class="activity-time">Hace 2 días</div>
+                    </div>
+                    <div class="activity-description">
+                        Reprodujo video "Business English Conversations" - 45 minutos de visualización
+                    </div>
+                    <div class="activity-tags">
+                        <span class="activity-tag video">Video</span>
+                        <span class="activity-tag">Business English</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function filterActivity(type) {
+            const items = document.querySelectorAll('.activity-item');
+            const tabs = document.querySelectorAll('.filter-tab');
+            const emptyState = document.querySelector('.empty-state');
+            
+            // Update tab states
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // For demo purposes, always show empty state since Auth0 is not working
+            emptyState.style.display = 'block';
+            items.forEach(item => item.style.display = 'none');
+            
+            // This would be the actual filtering logic when users are authenticated:
+            /*
+            let hasVisibleItems = false;
+            items.forEach(item => {
+                if (type === 'all' || item.dataset.type === type) {
+                    item.style.display = 'block';
+                    hasVisibleItems = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            emptyState.style.display = hasVisibleItems ? 'none' : 'block';
+            */
+        }
+        
+        // Simular actualizaciones de estadísticas cuando el sistema esté funcionando
+        function updateStats() {
+            // Esta función se activaría cuando Auth0 esté funcionando
+            console.log('Stats would be updated here when authentication is working');
+        }
+        
+        // Actualizar cada 30 segundos
+        setInterval(updateStats, 30000);
+    </script>
+</body>
+</html>

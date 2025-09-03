@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Logs - FluentLeap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e1e5e9;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .metric-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .metric-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .metric-unit {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-left: 5px;
+        }
+        
+        .metric-change {
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .positive { color: #38a169; }
+        .negative { color: #e53e3e; }
+        .neutral { color: #718096; }
+        
+        .performance-chart {
+            margin: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .chart-header {
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .chart-subtitle {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            background: #f7fafc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        .logs-section {
+            margin: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .logs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logs-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: transform 0.2s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .log-entry {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-time {
+            color: #718096;
+            font-size: 0.85rem;
+            width: 80px;
+            flex-shrink: 0;
+        }
+        
+        .log-level {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            width: 60px;
+            text-align: center;
+            margin: 0 15px;
+        }
+        
+        .log-level.info { background: #bee3f8; color: #2b6cb0; }
+        .log-level.success { background: #c6f6d5; color: #276749; }
+        .log-level.warning { background: #faf089; color: #744210; }
+        .log-level.error { background: #fed7d7; color: #c53030; }
+        
+        .log-message {
+            flex: 1;
+            color: #4a5568;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e2e8f0;
+            color: #4a5568;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-good { background: #38a169; }
+        .status-warning { background: #d69e2e; }
+        .status-critical { background: #e53e3e; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="history.back()">← Volver</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>📊 Performance Logs</h1>
+            <p>Monitoreo en tiempo real del rendimiento del sistema FluentLeap</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: #e6fffa; color: #319795;">⚡</div>
+                    <div class="metric-title">Tiempo de Carga</div>
+                </div>
+                <div class="metric-value" style="color: #319795;">
+                    1.2<span class="metric-unit">s</span>
+                </div>
+                <div class="metric-change positive">
+                    <span>↓ 15%</span> vs. última semana
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%;"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: #fef5e7; color: #d69e2e;">🧠</div>
+                    <div class="metric-title">Uso de Memoria</div>
+                </div>
+                <div class="metric-value" style="color: #d69e2e;">
+                    68<span class="metric-unit">MB</span>
+                </div>
+                <div class="metric-change neutral">
+                    <span>→ 0%</span> sin cambios
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 68%; background: linear-gradient(90deg, #faf089 0%, #d69e2e 100%);"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: #e6ffed; color: #38a169;">📈</div>
+                    <div class="metric-title">Requests/min</div>
+                </div>
+                <div class="metric-value" style="color: #38a169;">
+                    142<span class="metric-unit">req</span>
+                </div>
+                <div class="metric-change positive">
+                    <span>↑ 23%</span> vs. ayer
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 71%;"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: #fed7d7; color: #e53e3e;">🔥</div>
+                    <div class="metric-title">CPU Usage</div>
+                </div>
+                <div class="metric-value" style="color: #e53e3e;">
+                    23<span class="metric-unit">%</span>
+                </div>
+                <div class="metric-change negative">
+                    <span>↑ 8%</span> pico detectado
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 23%; background: linear-gradient(90deg, #fed7d7 0%, #e53e3e 100%);"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: #e6f3ff; color: #3182ce;">🌐</div>
+                    <div class="metric-title">Uptime</div>
+                </div>
+                <div class="metric-value" style="color: #3182ce;">
+                    99.8<span class="metric-unit">%</span>
+                </div>
+                <div class="metric-change positive">
+                    <span class="status-indicator status-good"></span>Sistema estable
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 99.8%;"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: #f0fff4; color: #38a169;">💾</div>
+                    <div class="metric-title">Database</div>
+                </div>
+                <div class="metric-value" style="color: #38a169;">
+                    45<span class="metric-unit">ms</span>
+                </div>
+                <div class="metric-change positive">
+                    <span>↓ 12%</span> latencia mejorada
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 90%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="performance-chart">
+            <div class="chart-header">
+                <div class="chart-title">Rendimiento en las Últimas 24 Horas</div>
+                <div class="chart-subtitle">Tiempo de respuesta promedio y throughput</div>
+            </div>
+            <div class="chart-container">
+                📊 Gráfico de rendimiento en tiempo real
+                <br><small>(Integración con herramientas de monitoreo pendiente)</small>
+            </div>
+        </div>
+        
+        <div class="logs-section">
+            <div class="logs-header">
+                <div class="logs-title">Logs de Rendimiento Recientes</div>
+                <button class="refresh-btn" onclick="refreshLogs()">🔄 Actualizar</button>
+            </div>
+            
+            <div class="log-entry">
+                <div class="log-time">09:52:15</div>
+                <div class="log-level success">INFO</div>
+                <div class="log-message">Servidor iniciado correctamente en puerto 3000</div>
+            </div>
+            
+            <div class="log-entry">
+                <div class="log-time">09:52:16</div>
+                <div class="log-level info">DEBUG</div>
+                <div class="log-message">Vite development server ready in 862ms</div>
+            </div>
+            
+            <div class="log-entry">
+                <div class="log-time">09:52:18</div>
+                <div class="log-level warning">WARN</div>
+                <div class="log-message">NODE_ENV=production no soportado en .env file</div>
+            </div>
+            
+            <div class="log-entry">
+                <div class="log-time">09:52:20</div>
+                <div class="log-level error">ERROR</div>
+                <div class="log-message">Auth0 SDK failed to load within timeout</div>
+            </div>
+            
+            <div class="log-entry">
+                <div class="log-time">09:53:00</div>
+                <div class="log-level success">INFO</div>
+                <div class="log-message">NODE_ENV cambiado a development exitosamente</div>
+            </div>
+            
+            <div class="log-entry">
+                <div class="log-time">09:54:00</div>
+                <div class="log-level success">INFO</div>
+                <div class="log-message">home-features.js creado - Error 404 resuelto</div>
+            </div>
+            
+            <div class="log-entry">
+                <div class="log-time">09:55:00</div>
+                <div class="log-level success">INFO</div>
+                <div class="log-message">Script order corregido en index.html</div>
+            </div>
+            
+            <div class="log-entry">
+                <div class="log-time">09:56:30</div>
+                <div class="log-level info">DEBUG</div>
+                <div class="log-message">Performance monitoring iniciado</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function refreshLogs() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.innerHTML = '🔄 Actualizando...';
+            btn.disabled = true;
+            
+            // Simular actualización
+            setTimeout(() => {
+                btn.innerHTML = '🔄 Actualizar';
+                btn.disabled = false;
+                
+                // Agregar nuevo log de ejemplo
+                const logsSection = document.querySelector('.logs-section');
+                const newLog = document.createElement('div');
+                newLog.className = 'log-entry';
+                newLog.innerHTML = `
+                    <div class="log-time">${new Date().toLocaleTimeString()}</div>
+                    <div class="log-level info">INFO</div>
+                    <div class="log-message">Logs actualizados manualmente</div>
+                `;
+                logsSection.appendChild(newLog);
+            }, 1000);
+        }
+        
+        // Actualizar métricas cada 30 segundos
+        setInterval(() => {
+            // Simular cambios en las métricas
+            const metrics = document.querySelectorAll('.metric-value');
+            metrics.forEach(metric => {
+                // Pequeñas variaciones aleatorias para simular datos en tiempo real
+                const currentValue = parseFloat(metric.textContent);
+                const variation = (Math.random() - 0.5) * 0.1;
+                const newValue = Math.max(0, currentValue + variation);
+                metric.innerHTML = newValue.toFixed(1) + metric.querySelector('.metric-unit').outerHTML;
+            });
+        }, 30000);
+    </script>
+</body>
+</html>

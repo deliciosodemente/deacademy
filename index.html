@@ -172,6 +172,10 @@
     }
   }
   </script>
+  
+  <!-- Main Application Script (moved here to be after importmap) -->
+  <script type="module" src="./app.js"></script>
+  
   <!-- Auth0 SPA SDK -->
   <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js" defer></script>
   <!-- Stripe.js (for future card elements; payment links use window.open) -->
@@ -379,8 +383,7 @@
   <!-- Phosphor Icons (loaded after critical content) -->
   <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
-  <!-- Main Application Script -->
-  <script type="module" src="./app.js"></script>
+  <!-- Main Application Script moved to head after importmap -->
 
   <!-- Service Worker Registration -->
   <script>

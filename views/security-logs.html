@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Logs - FluentLeap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #111111;
+            border-radius: 12px;
+            border: 1px solid #333333;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .security-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .security-card {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .security-card:hover {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .threat-level {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+        
+        .threat-low { background: #27ae60; color: white; }
+        .threat-medium { background: #f39c12; color: white; }
+        .threat-high { background: #e74c3c; color: white; }
+        .threat-critical { background: #8e44ad; color: white; }
+        
+        .security-metric {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+        }
+        
+        .metric-description {
+            color: #888888;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .security-list {
+            list-style: none;
+        }
+        
+        .security-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #333333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .security-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .event-time {
+            color: #888888;
+            font-size: 0.8rem;
+        }
+        
+        .logs-section {
+            margin: 30px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .logs-header {
+            background: #222222;
+            padding: 20px;
+            border-bottom: 1px solid #333333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logs-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            background: #333333;
+            border: 1px solid #555555;
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn.active {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+        
+        .filter-btn:hover {
+            border-color: #ff6b6b;
+        }
+        
+        .log-entry {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #333333;
+            transition: background 0.2s ease;
+        }
+        
+        .log-entry:hover {
+            background: #222222;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-severity {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .severity-info { background: #3498db; }
+        .severity-warning { background: #f39c12; }
+        .severity-error { background: #e74c3c; }
+        .severity-critical { background: #8e44ad; }
+        
+        .log-time {
+            color: #888888;
+            font-size: 0.85rem;
+            width: 100px;
+            flex-shrink: 0;
+        }
+        
+        .log-type {
+            background: #333333;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            width: 80px;
+            text-align: center;
+            margin: 0 15px;
+            flex-shrink: 0;
+        }
+        
+        .log-message {
+            flex: 1;
+            color: #cccccc;
+        }
+        
+        .log-ip {
+            color: #ff6b6b;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            margin-left: 15px;
+            flex-shrink: 0;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #222222;
+            border: 1px solid #555555;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-button:hover {
+            background: #333333;
+            border-color: #ff6b6b;
+        }
+        
+        .alert-banner {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        .chart-placeholder {
+            height: 200px;
+            background: #222222;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888888;
+            font-style: italic;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="history.back()">← Volver</button>
+    
+    <div class="alert-banner">
+        🚨 Sistema de Monitoreo de Seguridad Activo - Última actualización: 09:56:45
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Security Logs</h1>
+            <p>Monitoreo avanzado de seguridad y detección de amenazas</p>
+        </div>
+        
+        <div class="security-dashboard">
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #27ae60; color: white;">🔒</div>
+                    <div class="card-title">Estado de Autenticación</div>
+                    <div class="threat-level threat-medium">Medium</div>
+                </div>
+                <div class="security-metric">⚠️</div>
+                <div class="metric-description">Auth0 SDK no inicializado correctamente</div>
+                <ul class="security-list">
+                    <li>
+                        <span>Intentos de login fallidos</span>
+                        <span class="event-time">0 hoy</span>
+                    </li>
+                    <li>
+                        <span>Sesiones activas</span>
+                        <span class="event-time">0</span>
+                    </li>
+                    <li>
+                        <span>Tokens expirados</span>
+                        <span class="event-time">N/A</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #3498db; color: white;">🌐</div>
+                    <div class="card-title">Tráfico de Red</div>
+                    <div class="threat-level threat-low">Low</div>
+                </div>
+                <div class="security-metric">142</div>
+                <div class="metric-description">Requests por minuto</div>
+                <ul class="security-list">
+                    <li>
+                        <span>IPs únicas</span>
+                        <span class="event-time">23</span>
+                    </li>
+                    <li>
+                        <span>Requests bloqueados</span>
+                        <span class="event-time">0</span>
+                    </li>
+                    <li>
+                        <span>Rate limiting</span>
+                        <span class="event-time">Activo</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #f39c12; color: white;">⚡</div>
+                    <div class="card-title">Vulnerabilidades</div>
+                    <div class="threat-level threat-medium">Medium</div>
+                </div>
+                <div class="security-metric">3</div>
+                <div class="metric-description">Problemas de configuración detectados</div>
+                <ul class="security-list">
+                    <li>
+                        <span>NODE_ENV incorrecto</span>
+                        <span class="event-time">✅ Resuelto</span>
+                    </li>
+                    <li>
+                        <span>Script order issue</span>
+                        <span class="event-time">✅ Resuelto</span>
+                    </li>
+                    <li>
+                        <span>Missing CloudFront key</span>
+                        <span class="event-time">⚠️ Pendiente</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #e74c3c; color: white;">🔥</div>
+                    <div class="card-title">Amenazas Detectadas</div>
+                    <div class="threat-level threat-low">Low</div>
+                </div>
+                <div class="security-metric">0</div>
+                <div class="metric-description">Sin amenazas activas</div>
+                <div class="chart-placeholder">
+                    📊 Gráfico de amenazas en tiempo real
+                </div>
+            </div>
+        </div>
+        
+        <div class="logs-section">
+            <div class="logs-header">
+                <div class="logs-title">Eventos de Seguridad Recientes</div>
+                <div class="filter-controls">
+                    <button class="filter-btn active" onclick="filterLogs('all')">Todos</button>
+                    <button class="filter-btn" onclick="filterLogs('auth')">Auth</button>
+                    <button class="filter-btn" onclick="filterLogs('access')">Acceso</button>
+                    <button class="filter-btn" onclick="filterLogs('error')">Errores</button>
+                    <button class="filter-btn" onclick="filterLogs('config')">Config</button>
+                </div>
+            </div>
+            
+            <div class="log-entry" data-type="error">
+                <div class="log-severity severity-error"></div>
+                <div class="log-time">09:52:00</div>
+                <div class="log-type">AUTH</div>
+                <div class="log-message">Auth0 SDK initialization failed - timeout error</div>
+                <div class="log-ip">localhost</div>
+            </div>
+            
+            <div class="log-entry" data-type="error">
+                <div class="log-severity severity-error"></div>
+                <div class="log-time">09:52:00</div>
+                <div class="log-type">DB</div>
+                <div class="log-message">Database module failed - missing auth dependency</div>
+                <div class="log-ip">localhost</div>
+            </div>
+            
+            <div class="log-entry" data-type="error">
+                <div class="log-severity severity-error"></div>
+                <div class="log-time">09:52:00</div>
+                <div class="log-type">PAY</div>
+                <div class="log-message">Payment system failed - missing auth dependency</div>
+                <div class="log-ip">localhost</div>
+            </div>
+            
+            <div class="log-entry" data-type="config">
+                <div class="log-severity severity-warning"></div>
+                <div class="log-time">09:51:00</div>
+                <div class="log-type">CONFIG</div>
+                <div class="log-message">NODE_ENV=production not supported in .env file</div>
+                <div class="log-ip">system</div>
+            </div>
+            
+            <div class="log-entry" data-type="config">
+                <div class="log-severity severity-warning"></div>
+                <div class="log-time">09:51:17</div>
+                <div class="log-type">CONFIG</div>
+                <div class="log-message">Import map script order warning in index.html</div>
+                <div class="log-ip">system</div>
+            </div>
+            
+            <div class="log-entry" data-type="access">
+                <div class="log-severity severity-info"></div>
+                <div class="log-time">09:46:57</div>
+                <div class="log-type">ACCESS</div>
+                <div class="log-message">Development server started successfully</div>
+                <div class="log-ip">127.0.0.1</div>
+            </div>
+            
+            <div class="log-entry" data-type="config">
+                <div class="log-severity severity-info"></div>
+                <div class="log-time">09:53:00</div>
+                <div class="log-type">CONFIG</div>
+                <div class="log-message">NODE_ENV successfully changed to development</div>
+                <div class="log-ip">system</div>
+            </div>
+            
+            <div class="log-entry" data-type="config">
+                <div class="log-severity severity-info"></div>
+                <div class="log-time">09:54:00</div>
+                <div class="log-type">CONFIG</div>
+                <div class="log-message">Missing file home-features.js created successfully</div>
+                <div class="log-ip">system</div>
+            </div>
+            
+            <div class="log-entry" data-type="config">
+                <div class="log-severity severity-info"></div>
+                <div class="log-time">09:55:00</div>
+                <div class="log-type">CONFIG</div>
+                <div class="log-message">Script order corrected in index.html</div>
+                <div class="log-ip">system</div>
+            </div>
+            
+            <div class="log-entry" data-type="access">
+                <div class="log-severity severity-info"></div>
+                <div class="log-time">09:56:30</div>
+                <div class="log-type">ACCESS</div>
+                <div class="log-message">Security monitoring system activated</div>
+                <div class="log-ip">127.0.0.1</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function filterLogs(type) {
+            const entries = document.querySelectorAll('.log-entry');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update button states
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter entries
+            entries.forEach(entry => {
+                if (type === 'all' || entry.dataset.type === type) {
+                    entry.style.display = 'flex';
+                } else {
+                    entry.style.display = 'none';
+                }
+            });
+        }
+        
+        // Simular actualizaciones en tiempo real
+        setInterval(() => {
+            const timestamp = new Date().toLocaleTimeString();
+            const banner = document.querySelector('.alert-banner');
+            banner.innerHTML = `🚨 Sistema de Monitoreo de Seguridad Activo - Última actualización: ${timestamp}`;
+        }, 60000);
+        
+        // Simular nuevos eventos de seguridad ocasionalmente
+        setInterval(() => {
+            if (Math.random() < 0.1) { // 10% de probabilidad cada minuto
+                const logsSection = document.querySelector('.logs-section');
+                const newLog = document.createElement('div');
+                newLog.className = 'log-entry';
+                newLog.dataset.type = 'access';
+                newLog.innerHTML = `
+                    <div class="log-severity severity-info"></div>
+                    <div class="log-time">${new Date().toLocaleTimeString()}</div>
+                    <div class="log-type">ACCESS</div>
+                    <div class="log-message">Nuevo acceso detectado</div>
+                    <div class="log-ip">192.168.1.${Math.floor(Math.random() * 255)}</div>
+                `;
+                logsSection.appendChild(newLog);
+            }
+        }, 60000);
+    </script>
+</body>
+</html>
