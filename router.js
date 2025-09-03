@@ -831,6 +831,14 @@ class EnhancedRouter {
         '/technical-logs': {
           file: './views/technical-logs.html',
           title: 'Technical Logs - Digital English Academy'
+        },
+        '/avatar-upload': {
+            file: 'views/avatar-upload.html',
+            title: 'Subir Avatar - FluentLeap'
+        },
+        '/feature-flags-demo': {
+            file: 'views/feature-flags-demo.html',
+            title: 'Demo Feature Flags - FluentLeap'
         }
       };
 

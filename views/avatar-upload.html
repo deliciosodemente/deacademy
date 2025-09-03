@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Avatar - FluentLeap</title>
+    <style>
+        .avatar-upload-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .upload-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            disabled: opacity 0.6;
+        }
+
+        .upload-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .upload-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .preview-container {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 50%;
+            border: 4px solid #e2e8f0;
+            object-fit: cover;
+        }
+
+        .result-container {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+        }
+
+        .error-container {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            color: #dc2626;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .file-info {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        .url-link {
+            color: #3b82f6;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .url-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar-upload-container">
+        <h1>📸 Subir Avatar</h1>
+        <p>Sube tu foto de perfil para personalizar tu cuenta en FluentLeap.</p>
+        
+        <form class="upload-form" id="avatarForm">
+            <div class="file-input-wrapper">
+                <input 
+                    type="file" 
+                    id="avatarFile" 
+                    class="file-input"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    required
+                >
+                <div class="file-info">
+                    Formatos soportados: JPEG, PNG, WebP, GIF (máximo 4.5MB)
+                </div>
+            </div>
+
+            <button type="submit" class="upload-button" id="uploadBtn">
+                <span id="uploadText">Subir Avatar</span>
+                <span id="uploadLoading" class="loading" style="display: none;"></span>
+            </button>
+        </form>
+
+        <div class="preview-container" id="previewContainer" style="display: none;">
+            <h3>Vista previa:</h3>
+            <img id="previewImage" class="preview-image" alt="Vista previa del avatar">
+        </div>
+
+        <div class="result-container" id="resultContainer" style="display: none;">
+            <h3>✅ Avatar subido exitosamente</h3>
+            <p><strong>URL:</strong> <a id="avatarUrl" class="url-link" target="_blank"></a></p>
+            <p><strong>Tamaño:</strong> <span id="fileSize"></span></p>
+            <p><strong>Subido:</strong> <span id="uploadTime"></span></p>
+        </div>
+
+        <div class="error-container" id="errorContainer" style="display: none;">
+            <h3>❌ Error al subir avatar</h3>
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        class AvatarUploader {
+            constructor() {
+                this.form = document.getElementById('avatarForm');
+                this.fileInput = document.getElementById('avatarFile');
+                this.uploadBtn = document.getElementById('uploadBtn');
+                this.uploadText = document.getElementById('uploadText');
+                this.uploadLoading = document.getElementById('uploadLoading');
+                this.previewContainer = document.getElementById('previewContainer');
+                this.previewImage = document.getElementById('previewImage');
+                this.resultContainer = document.getElementById('resultContainer');
+                this.errorContainer = document.getElementById('errorContainer');
+                
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                this.form.addEventListener('submit', this.handleSubmit.bind(this));
+                this.fileInput.addEventListener('change', this.handleFileSelect.bind(this));
+            }
+
+            handleFileSelect(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    this.showPreview(file);
+                    this.hideMessages();
+                }
+            }
+
+            showPreview(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.previewImage.src = e.target.result;
+                    this.previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            async handleSubmit(event) {
+                event.preventDefault();
+                
+                const file = this.fileInput.files[0];
+                if (!file) {
+                    this.showError('Por favor selecciona un archivo');
+                    return;
+                }
+
+                // Validar tamaño (4.5MB)
+                if (file.size > 4.5 * 1024 * 1024) {
+                    this.showError('El archivo es demasiado grande. Máximo 4.5MB.');
+                    return;
+                }
+
+                this.setLoading(true);
+                this.hideMessages();
+
+                try {
+                    const response = await fetch(`/api/upload/avatar?filename=${encodeURIComponent(file.name)}`, {
+                        method: 'POST',
+                        body: file,
+                        headers: {
+                            'Content-Type': file.type
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        this.showSuccess(result.blob);
+                    } else {
+                        this.showError(result.error || 'Error desconocido al subir el archivo');
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    this.showError('Error de conexión. Por favor intenta de nuevo.');
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            setLoading(loading) {
+                this.uploadBtn.disabled = loading;
+                this.uploadText.style.display = loading ? 'none' : 'inline';
+                this.uploadLoading.style.display = loading ? 'inline-block' : 'none';
+            }
+
+            showSuccess(blob) {
+                document.getElementById('avatarUrl').href = blob.url;
+                document.getElementById('avatarUrl').textContent = blob.url;
+                document.getElementById('fileSize').textContent = this.formatFileSize(blob.size);
+                document.getElementById('uploadTime').textContent = new Date(blob.uploadedAt).toLocaleString('es-ES');
+                
+                this.resultContainer.style.display = 'block';
+                this.errorContainer.style.display = 'none';
+            }
+
+            showError(message) {
+                document.getElementById('errorMessage').textContent = message;
+                this.errorContainer.style.display = 'block';
+                this.resultContainer.style.display = 'none';
+            }
+
+            hideMessages() {
+                this.resultContainer.style.display = 'none';
+                this.errorContainer.style.display = 'none';
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            new AvatarUploader();
+        });
+    </script>
+</body>
+</html>

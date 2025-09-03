@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Feature Flags - FluentLeap</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .feature-enabled {
+            border-left: 4px solid #28a745;
+            background: #d4edda;
+        }
+        .feature-disabled {
+            border-left: 4px solid #dc3545;
+            background: #f8d7da;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-enabled {
+            background: #28a745;
+            color: white;
+        }
+        .status-disabled {
+            background: #dc3545;
+            color: white;
+        }
+        .refresh-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .refresh-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚩 Demo de Feature Flags</h1>
+        <p>Esta página demuestra cómo funcionan los feature flags en FluentLeap usando Vercel Flags SDK con Statsig.</p>
+        
+        <button class="refresh-btn" onclick="checkFeatureFlags()">🔄 Actualizar Estados</button>
+        
+        <div id="feature-flags-container">
+            <!-- Los feature flags se cargarán aquí dinámicamente -->
+        </div>
+        
+        <div class="feature-card">
+            <h3>📋 Instrucciones</h3>
+            <ol>
+                <li>Abre la consola de Statsig desde el dashboard de Vercel</li>
+                <li>Crea nuevos Feature Gates con los nombres mostrados arriba</li>
+                <li>Activa/desactiva los flags en Statsig</li>
+                <li>Haz clic en "Actualizar Estados" para ver los cambios</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Simulación de feature flags para la demo
+        // En producción, estos valores vendrían del servidor
+        const featureFlags = {
+            'my_feature_flag': {
+                name: 'Mi Feature Flag',
+                description: 'Flag de ejemplo básico',
+                enabled: false
+            },
+            'avatar_upload_enabled': {
+                name: 'Subida de Avatares',
+                description: 'Habilita la funcionalidad de subida de avatares',
+                enabled: true
+            },
+            'chat_interface_v2': {
+                name: 'Chat Interface v2',
+                description: 'Nueva versión de la interfaz de chat',
+                enabled: false
+            },
+            'premium_features_enabled': {
+                name: 'Características Premium',
+                description: 'Habilita funciones premium para usuarios suscritos',
+                enabled: true
+            }
+        };
+
+        function renderFeatureFlags() {
+            const container = document.getElementById('feature-flags-container');
+            container.innerHTML = '';
+            
+            Object.entries(featureFlags).forEach(([key, flag]) => {
+                const card = document.createElement('div');
+                card.className = `feature-card ${flag.enabled ? 'feature-enabled' : 'feature-disabled'}`;
+                
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3>${flag.name}</h3>
+                            <p>${flag.description}</p>
+                            <code>Key: ${key}</code>
+                        </div>
+                        <div>
+                            <span class="status-badge ${flag.enabled ? 'status-enabled' : 'status-disabled'}">
+                                ${flag.enabled ? 'Habilitado' : 'Deshabilitado'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function checkFeatureFlags() {
+            // En una implementación real, esto haría una llamada al servidor
+            // para obtener los estados actuales de los feature flags
+            console.log('Verificando estados de feature flags...');
+            
+            // Simulamos cambios aleatorios para la demo
+            Object.keys(featureFlags).forEach(key => {
+                if (Math.random() > 0.7) {
+                    featureFlags[key].enabled = !featureFlags[key].enabled;
+                }
+            });
+            
+            renderFeatureFlags();
+        }
+
+        // Renderizar al cargar la página
+        document.addEventListener('DOMContentLoaded', renderFeatureFlags);
+    </script>
+</body>
+</html>
