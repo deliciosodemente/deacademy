@@ -272,10 +272,10 @@ NODE_ENV=development</div>
                 <div class="log-message">
                     Movido el script de módulo principal después del importmap en el head para resolver advertencias de Vite.
                 </div>
-                <div class="log-code"><!-- Import Map for ESM libraries -->
-<script type="importmap">{...}</script>
-<!-- Main Application Script (moved here to be after importmap) -->
-<script type="module" src="./app.js"></script></div>
+                <div class="log-code">&lt;!-- Import Map for ESM libraries --&gt;<br>
+                &lt;script type="importmap"&gt;{...}&lt;/script&gt;<br>
+                &lt;!-- Main Application Script (moved here to be after importmap) --&gt;<br>
+                &lt;script type="module" src="../app.js"&gt;&lt;/script&gt;</div>
             </div>
         </div>
         

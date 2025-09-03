@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Logs - FluentLeap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .logs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .log-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #3b82f6;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .log-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .log-card.technical {
+            border-left-color: #ef4444;
+        }
+        
+        .log-card.performance {
+            border-left-color: #f59e0b;
+        }
+        
+        .log-card.security {
+            border-left-color: #10b981;
+        }
+        
+        .log-card.user {
+            border-left-color: #8b5cf6;
+        }
+        
+        .log-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        
+        .log-description {
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .log-link {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .log-link:hover {
+            background: #2563eb;
+        }
+        
+        .log-card.technical .log-link {
+            background: #ef4444;
+        }
+        
+        .log-card.technical .log-link:hover {
+            background: #dc2626;
+        }
+        
+        .log-card.performance .log-link {
+            background: #f59e0b;
+        }
+        
+        .log-card.performance .log-link:hover {
+            background: #d97706;
+        }
+        
+        .log-card.security .log-link {
+            background: #10b981;
+        }
+        
+        .log-card.security .log-link:hover {
+            background: #059669;
+        }
+        
+        .log-card.user .log-link {
+            background: #8b5cf6;
+        }
+        
+        .log-card.user .log-link:hover {
+            background: #7c3aed;
+        }
+        
+        .stats {
+            background: #1f2937;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Sistema de Logs</h1>
+            <p>Monitoreo completo del sistema FluentLeap</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Tipos de Logs</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Monitoreo</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">Real-time</div>
+                <div class="stat-label">Actualizaciones</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Cobertura</div>
+            </div>
+        </div>
+        
+        <div class="logs-grid">
+            <div class="log-card technical">
+                <div class="log-title">🔧 Logs Técnicos</div>
+                <div class="log-description">
+                    Errores del sistema, problemas de configuración, fallos de inicialización y resoluciones técnicas implementadas.
+                </div>
+                <a href="./technical-logs.html" class="log-link">Ver Logs Técnicos</a>
+            </div>
+            
+            <div class="log-card performance">
+                <div class="log-title">⚡ Logs de Rendimiento</div>
+                <div class="log-description">
+                    Métricas de rendimiento, tiempo de carga, uso de memoria, CPU y optimizaciones del sistema.
+                </div>
+                <a href="./performance-logs.html" class="log-link">Ver Rendimiento</a>
+            </div>
+            
+            <div class="log-card security">
+                <div class="log-title">🔒 Logs de Seguridad</div>
+                <div class="log-description">
+                    Eventos de seguridad, intentos de acceso, vulnerabilidades detectadas y medidas de protección.
+                </div>
+                <a href="./security-logs.html" class="log-link">Ver Seguridad</a>
+            </div>
+            
+            <div class="log-card user">
+                <div class="log-title">👥 Logs de Usuarios</div>
+                <div class="log-description">
+                    Actividad de usuarios, patrones de uso, estadísticas de aprendizaje y comportamiento en la plataforma.
+                </div>
+                <a href="./user-logs.html" class="log-link">Ver Usuarios</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
