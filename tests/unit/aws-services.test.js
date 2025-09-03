@@ -14,18 +14,21 @@ vi.mock('aws-sdk', () => {
         getSignedUrl: vi.fn()
     };
 
+    const Signer = vi.fn(() => mockCloudFrontInstance);
+
     return {
-        default: {
-            S3: vi.fn(() => mockS3Instance),
-            CloudFront: {
-                Signer: vi.fn(() => mockCloudFrontInstance)
-            }
+        S3: vi.fn(() => mockS3Instance),
+        CloudFront: {
+            Signer: Signer
+        },
+        config: {
+            update: vi.fn()
         }
     };
 });
 
-const mockS3Instance = new AWS.S3();
-const mockCloudFrontInstance = new AWS.CloudFront.Signer();
+const mockS3Instance = new (await import('aws-sdk')).S3();
+const mockCloudFrontSigner = new (await import('aws-sdk')).CloudFront.Signer();
 
 describe('AWS Services', () => {
     beforeEach(() => {
@@ -144,14 +147,14 @@ describe('AWS Services', () => {
         it('should generate signed URLs for video streaming', () => {
             const mockSignedUrl = 'https://test.cloudfront.net/video.mp4?Policy=abc&Signature=def&Key-Pair-Id=ghi';
             
-            mockCloudFrontInstance.getSignedUrl.mockReturnValue(mockSignedUrl);
+            mockCloudFrontSigner.getSignedUrl.mockReturnValue(mockSignedUrl);
 
-            const result = mockCloudFrontInstance.getSignedUrl({
+            const result = mockCloudFrontSigner.getSignedUrl({
                 url: 'https://test.cloudfront.net/video.mp4',
                 expires: Math.floor(Date.now() / 1000) + 3600
             });
 
-            expect(mockCloudFrontInstance.getSignedUrl).toHaveBeenCalledWith({
+            expect(mockCloudFrontSigner.getSignedUrl).toHaveBeenCalledWith({
                 url: 'https://test.cloudfront.net/video.mp4',
                 expires: expect.any(Number)
             });
@@ -159,12 +162,12 @@ describe('AWS Services', () => {
         });
 
         it('should handle CloudFront signing errors', () => {
-            mockCloudFrontInstance.getSignedUrl.mockImplementation(() => {
+            mockCloudFrontSigner.getSignedUrl.mockImplementation(() => {
                 throw new Error('Invalid private key');
             });
 
             expect(() => {
-                mockCloudFrontInstance.getSignedUrl({
+                mockCloudFrontSigner.getSignedUrl({
                     url: 'https://test.cloudfront.net/video.mp4',
                     expires: Math.floor(Date.now() / 1000) + 3600
                 });
@@ -188,7 +191,8 @@ describe('AWS Services', () => {
     });
 
     describe('AWS Services Integration', () => {
-        it('should handle AWS service initialization', () => {
+        it('should handle AWS service initialization', async () => {
+            const AWS = (await import('aws-sdk'));
             expect(AWS.S3).toBeDefined();
             expect(AWS.CloudFront.Signer).toBeDefined();
         });

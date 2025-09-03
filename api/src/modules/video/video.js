@@ -66,7 +66,7 @@ const generateCloudFrontSignedUrl = (videoKey, expirationTime) => {
 // Get video metadata from S3
 const getVideoMetadata = async (videoKey) => {
     try {
-        const bucketParam = ACCESS_POINT_ARN || BUCKET_NAME;
+        const bucketParam = process.env.S3_ACCESS_POINT_ARN || process.env.S3_BUCKET_NAME;
         const params = {
             Bucket: bucketParam,
             Key: videoKey
@@ -126,7 +126,7 @@ const getSignedUrl = async (req, res) => {
         // Fallback to S3 signed URL if CloudFront fails or is disabled
         if (!signedUrl) {
             // Use S3 Access Point for signed URL
-            const bucketParam = ACCESS_POINT_ARN || BUCKET_NAME;
+            const bucketParam = process.env.S3_ACCESS_POINT_ARN || process.env.S3_BUCKET_NAME;
             const params = {
                 Bucket: bucketParam,
                 Key: videoKey,
@@ -141,7 +141,7 @@ const getSignedUrl = async (req, res) => {
             videoKey,
             expiresAt: new Date(expirationTime).toISOString(),
             source: signedUrl.includes('cloudfront') ? 'cloudfront' : 's3',
-            accessPoint: ACCESS_POINT_ALIAS ? 'enabled' : 'disabled',
+            accessPoint: process.env.S3_ACCESS_POINT_ALIAS ? 'enabled' : 'disabled',
             metadata: metadata ? {
                 size: metadata.size,
                 duration: metadata.metadata.duration || null,
@@ -175,7 +175,7 @@ const listCourseVideos = async (req, res) => {
         }
 
         const params = {
-            Bucket: BUCKET_NAME,
+            Bucket: process.env.S3_BUCKET_NAME,
             Prefix: `${courseId}/`,
             Delimiter: '/'
         };
@@ -219,7 +219,13 @@ const healthCheck = async (req, res) => {
 
         // Test S3 connection
         try {
-            const bucketParam = ACCESS_POINT_ARN || BUCKET_NAME;
+            const bucketParam = process.env.S3_BUCKET_NAME || process.env.S3_ACCESS_POINT_ARN;
+            
+            if (!bucketParam) {
+                throw new Error('No S3 bucket configuration found');
+            }
+            
+            // Try to connect to S3 (this will use mocks in test environment)
             await s3Client.headBucket({ Bucket: bucketParam }).promise();
             checks.s3 = true;
             checks.bucket = true;
@@ -228,7 +234,7 @@ const healthCheck = async (req, res) => {
         }
 
         // Test CloudFront configuration
-        if (CLOUDFRONT_DOMAIN && CLOUDFRONT_KEY_PAIR_ID) {
+        if (process.env.CLOUDFRONT_DOMAIN && process.env.CLOUDFRONT_KEY_PAIR_ID) {
             checks.cloudfront = true;
         }
 

@@ -74,9 +74,4 @@ export default defineConfig({
             '@tests': new URL('./', import.meta.url).pathname
         }
     },
-
-    // Define global variables
-    define: {
-        'window': {},
-    }
 });
